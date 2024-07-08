@@ -1,0 +1,36 @@
+syntax = "proto3";
+
+package vault;
+
+option go_package = "github.com/fishus/go-advanced-gophkeeper/internal/adapter/handler/proto";
+
+//message Creds {
+//  string login = 1;
+//  string password = 2;
+//}
+//
+//message Card {
+//  string number = 1;
+//  string name = 2;
+//  string code = 3;
+//}
+//
+//message StorageCell {
+//  string id = 1;
+//  oneof data {
+//    Creds creds = 2;
+//    Card card = 3;
+//  }
+//}
+//
+//message Storage {
+//    repeated StorageCell data = 1;
+//}
+//
+//message AddVaultRequest {
+//  User user = 1;
+//  Storage storage = 2;
+//}
+//
+//message AddVaultResponse {
+//}
