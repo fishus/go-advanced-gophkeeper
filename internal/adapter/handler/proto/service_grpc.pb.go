@@ -19,9 +19,9 @@ import (
 const _ = grpc.SupportPackageIsVersion8
 
 const (
-	Vault_RegisterUser_FullMethodName = "/service.Vault/RegisterUser"
-	Vault_LoginUser_FullMethodName    = "/service.Vault/LoginUser"
-	Vault_Test_FullMethodName         = "/service.Vault/Test"
+	Vault_RegisterUser_FullMethodName   = "/service.Vault/RegisterUser"
+	Vault_LoginUser_FullMethodName      = "/service.Vault/LoginUser"
+	Vault_AddVaultRecord_FullMethodName = "/service.Vault/AddVaultRecord"
 )
 
 // VaultClient is the client API for Vault service.
@@ -30,7 +30,7 @@ const (
 type VaultClient interface {
 	RegisterUser(ctx context.Context, in *RegisterUserRequest, opts ...grpc.CallOption) (*RegisterUserResponse, error)
 	LoginUser(ctx context.Context, in *LoginUserRequest, opts ...grpc.CallOption) (*LoginUserResponse, error)
-	Test(ctx context.Context, in *TestRequest, opts ...grpc.CallOption) (*TestResponse, error)
+	AddVaultRecord(ctx context.Context, in *AddVaultRecordRequest, opts ...grpc.CallOption) (*AddVaultRecordResponse, error)
 }
 
 type vaultClient struct {
@@ -61,10 +61,10 @@ func (c *vaultClient) LoginUser(ctx context.Context, in *LoginUserRequest, opts 
 	return out, nil
 }
 
-func (c *vaultClient) Test(ctx context.Context, in *TestRequest, opts ...grpc.CallOption) (*TestResponse, error) {
+func (c *vaultClient) AddVaultRecord(ctx context.Context, in *AddVaultRecordRequest, opts ...grpc.CallOption) (*AddVaultRecordResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(TestResponse)
-	err := c.cc.Invoke(ctx, Vault_Test_FullMethodName, in, out, cOpts...)
+	out := new(AddVaultRecordResponse)
+	err := c.cc.Invoke(ctx, Vault_AddVaultRecord_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -77,7 +77,7 @@ func (c *vaultClient) Test(ctx context.Context, in *TestRequest, opts ...grpc.Ca
 type VaultServer interface {
 	RegisterUser(context.Context, *RegisterUserRequest) (*RegisterUserResponse, error)
 	LoginUser(context.Context, *LoginUserRequest) (*LoginUserResponse, error)
-	Test(context.Context, *TestRequest) (*TestResponse, error)
+	AddVaultRecord(context.Context, *AddVaultRecordRequest) (*AddVaultRecordResponse, error)
 	mustEmbedUnimplementedVaultServer()
 }
 
@@ -91,8 +91,8 @@ func (UnimplementedVaultServer) RegisterUser(context.Context, *RegisterUserReque
 func (UnimplementedVaultServer) LoginUser(context.Context, *LoginUserRequest) (*LoginUserResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method LoginUser not implemented")
 }
-func (UnimplementedVaultServer) Test(context.Context, *TestRequest) (*TestResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Test not implemented")
+func (UnimplementedVaultServer) AddVaultRecord(context.Context, *AddVaultRecordRequest) (*AddVaultRecordResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddVaultRecord not implemented")
 }
 func (UnimplementedVaultServer) mustEmbedUnimplementedVaultServer() {}
 
@@ -143,20 +143,20 @@ func _Vault_LoginUser_Handler(srv interface{}, ctx context.Context, dec func(int
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Vault_Test_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(TestRequest)
+func _Vault_AddVaultRecord_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AddVaultRecordRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(VaultServer).Test(ctx, in)
+		return srv.(VaultServer).AddVaultRecord(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Vault_Test_FullMethodName,
+		FullMethod: Vault_AddVaultRecord_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(VaultServer).Test(ctx, req.(*TestRequest))
+		return srv.(VaultServer).AddVaultRecord(ctx, req.(*AddVaultRecordRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -177,8 +177,8 @@ var Vault_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Vault_LoginUser_Handler,
 		},
 		{
-			MethodName: "Test",
-			Handler:    _Vault_Test_Handler,
+			MethodName: "AddVaultRecord",
+			Handler:    _Vault_AddVaultRecord_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

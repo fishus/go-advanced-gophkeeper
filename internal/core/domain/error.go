@@ -13,4 +13,7 @@ var (
 	ErrExpiredToken       = errors.New("access token has expired")
 	ErrInvalidToken       = errors.New("access token is invalid")
 	ErrInvalidCredentials = errors.New("incorrect login or password")
+
+	ErrUndefinedVaultKind = errors.New("vault kind is not defined")
+	ErrInvalidVaultKind   = errors.New("incorrect vault kind")
 )

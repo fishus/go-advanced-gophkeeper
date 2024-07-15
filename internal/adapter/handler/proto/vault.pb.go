@@ -9,7 +9,9 @@ package proto
 import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
+	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
 	reflect "reflect"
+	sync "sync"
 )
 
 const (
@@ -19,25 +21,666 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+type VaultKind int32
+
+const (
+	VaultKind_UNDEFINED VaultKind = 0
+	VaultKind_CREDS     VaultKind = 1
+	VaultKind_NOTE      VaultKind = 2
+	VaultKind_CARD      VaultKind = 3
+	VaultKind_FILE      VaultKind = 4
+)
+
+// Enum value maps for VaultKind.
+var (
+	VaultKind_name = map[int32]string{
+		0: "UNDEFINED",
+		1: "CREDS",
+		2: "NOTE",
+		3: "CARD",
+		4: "FILE",
+	}
+	VaultKind_value = map[string]int32{
+		"UNDEFINED": 0,
+		"CREDS":     1,
+		"NOTE":      2,
+		"CARD":      3,
+		"FILE":      4,
+	}
+)
+
+func (x VaultKind) Enum() *VaultKind {
+	p := new(VaultKind)
+	*p = x
+	return p
+}
+
+func (x VaultKind) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (VaultKind) Descriptor() protoreflect.EnumDescriptor {
+	return file_vault_proto_enumTypes[0].Descriptor()
+}
+
+func (VaultKind) Type() protoreflect.EnumType {
+	return &file_vault_proto_enumTypes[0]
+}
+
+func (x VaultKind) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use VaultKind.Descriptor instead.
+func (VaultKind) EnumDescriptor() ([]byte, []int) {
+	return file_vault_proto_rawDescGZIP(), []int{0}
+}
+
+type Creds struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Login    string `protobuf:"bytes,1,opt,name=login,proto3" json:"login,omitempty"`
+	Password string `protobuf:"bytes,2,opt,name=password,proto3" json:"password,omitempty"`
+}
+
+func (x *Creds) Reset() {
+	*x = Creds{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_vault_proto_msgTypes[0]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *Creds) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Creds) ProtoMessage() {}
+
+func (x *Creds) ProtoReflect() protoreflect.Message {
+	mi := &file_vault_proto_msgTypes[0]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Creds.ProtoReflect.Descriptor instead.
+func (*Creds) Descriptor() ([]byte, []int) {
+	return file_vault_proto_rawDescGZIP(), []int{0}
+}
+
+func (x *Creds) GetLogin() string {
+	if x != nil {
+		return x.Login
+	}
+	return ""
+}
+
+func (x *Creds) GetPassword() string {
+	if x != nil {
+		return x.Password
+	}
+	return ""
+}
+
+type Note struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Content string `protobuf:"bytes,1,opt,name=content,proto3" json:"content,omitempty"`
+}
+
+func (x *Note) Reset() {
+	*x = Note{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_vault_proto_msgTypes[1]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *Note) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Note) ProtoMessage() {}
+
+func (x *Note) ProtoReflect() protoreflect.Message {
+	mi := &file_vault_proto_msgTypes[1]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Note.ProtoReflect.Descriptor instead.
+func (*Note) Descriptor() ([]byte, []int) {
+	return file_vault_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *Note) GetContent() string {
+	if x != nil {
+		return x.Content
+	}
+	return ""
+}
+
+type CardExpDate struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Month uint32 `protobuf:"varint,1,opt,name=month,proto3" json:"month,omitempty"`
+	Year  uint32 `protobuf:"varint,2,opt,name=year,proto3" json:"year,omitempty"`
+}
+
+func (x *CardExpDate) Reset() {
+	*x = CardExpDate{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_vault_proto_msgTypes[2]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *CardExpDate) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CardExpDate) ProtoMessage() {}
+
+func (x *CardExpDate) ProtoReflect() protoreflect.Message {
+	mi := &file_vault_proto_msgTypes[2]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CardExpDate.ProtoReflect.Descriptor instead.
+func (*CardExpDate) Descriptor() ([]byte, []int) {
+	return file_vault_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *CardExpDate) GetMonth() uint32 {
+	if x != nil {
+		return x.Month
+	}
+	return 0
+}
+
+func (x *CardExpDate) GetYear() uint32 {
+	if x != nil {
+		return x.Year
+	}
+	return 0
+}
+
+type Card struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Number     string       `protobuf:"bytes,1,opt,name=number,proto3" json:"number,omitempty"`
+	HolderName string       `protobuf:"bytes,2,opt,name=holder_name,json=holderName,proto3" json:"holder_name,omitempty"`
+	ExpDate    *CardExpDate `protobuf:"bytes,3,opt,name=exp_date,json=expDate,proto3" json:"exp_date,omitempty"`
+	CvcCode    string       `protobuf:"bytes,4,opt,name=cvc_code,json=cvcCode,proto3" json:"cvc_code,omitempty"`
+}
+
+func (x *Card) Reset() {
+	*x = Card{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_vault_proto_msgTypes[3]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *Card) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Card) ProtoMessage() {}
+
+func (x *Card) ProtoReflect() protoreflect.Message {
+	mi := &file_vault_proto_msgTypes[3]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Card.ProtoReflect.Descriptor instead.
+func (*Card) Descriptor() ([]byte, []int) {
+	return file_vault_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *Card) GetNumber() string {
+	if x != nil {
+		return x.Number
+	}
+	return ""
+}
+
+func (x *Card) GetHolderName() string {
+	if x != nil {
+		return x.HolderName
+	}
+	return ""
+}
+
+func (x *Card) GetExpDate() *CardExpDate {
+	if x != nil {
+		return x.ExpDate
+	}
+	return nil
+}
+
+func (x *Card) GetCvcCode() string {
+	if x != nil {
+		return x.CvcCode
+	}
+	return ""
+}
+
+type File struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Filename string `protobuf:"bytes,1,opt,name=filename,proto3" json:"filename,omitempty"`
+	MimeType string `protobuf:"bytes,2,opt,name=mime_type,json=mimeType,proto3" json:"mime_type,omitempty"`
+	Filesize uint64 `protobuf:"varint,3,opt,name=filesize,proto3" json:"filesize,omitempty"`
+	Data     []byte `protobuf:"bytes,4,opt,name=data,proto3,oneof" json:"data,omitempty"`
+}
+
+func (x *File) Reset() {
+	*x = File{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_vault_proto_msgTypes[4]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *File) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*File) ProtoMessage() {}
+
+func (x *File) ProtoReflect() protoreflect.Message {
+	mi := &file_vault_proto_msgTypes[4]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use File.ProtoReflect.Descriptor instead.
+func (*File) Descriptor() ([]byte, []int) {
+	return file_vault_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *File) GetFilename() string {
+	if x != nil {
+		return x.Filename
+	}
+	return ""
+}
+
+func (x *File) GetMimeType() string {
+	if x != nil {
+		return x.MimeType
+	}
+	return ""
+}
+
+func (x *File) GetFilesize() uint64 {
+	if x != nil {
+		return x.Filesize
+	}
+	return 0
+}
+
+func (x *File) GetData() []byte {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+type Record struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Id   string    `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Kind VaultKind `protobuf:"varint,3,opt,name=kind,proto3,enum=vault.VaultKind" json:"kind,omitempty"`
+	// Types that are assignable to Data:
+	//
+	//	*Record_Creds
+	//	*Record_Note
+	//	*Record_Card
+	//	*Record_File
+	Data      isRecord_Data          `protobuf_oneof:"data"`
+	Info      string                 `protobuf:"bytes,8,opt,name=info,proto3" json:"info,omitempty"`
+	CreatedAt *timestamppb.Timestamp `protobuf:"bytes,9,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	UpdatedAt *timestamppb.Timestamp `protobuf:"bytes,10,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+}
+
+func (x *Record) Reset() {
+	*x = Record{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_vault_proto_msgTypes[5]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *Record) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Record) ProtoMessage() {}
+
+func (x *Record) ProtoReflect() protoreflect.Message {
+	mi := &file_vault_proto_msgTypes[5]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Record.ProtoReflect.Descriptor instead.
+func (*Record) Descriptor() ([]byte, []int) {
+	return file_vault_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *Record) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *Record) GetKind() VaultKind {
+	if x != nil {
+		return x.Kind
+	}
+	return VaultKind_UNDEFINED
+}
+
+func (m *Record) GetData() isRecord_Data {
+	if m != nil {
+		return m.Data
+	}
+	return nil
+}
+
+func (x *Record) GetCreds() *Creds {
+	if x, ok := x.GetData().(*Record_Creds); ok {
+		return x.Creds
+	}
+	return nil
+}
+
+func (x *Record) GetNote() *Note {
+	if x, ok := x.GetData().(*Record_Note); ok {
+		return x.Note
+	}
+	return nil
+}
+
+func (x *Record) GetCard() *Card {
+	if x, ok := x.GetData().(*Record_Card); ok {
+		return x.Card
+	}
+	return nil
+}
+
+func (x *Record) GetFile() *File {
+	if x, ok := x.GetData().(*Record_File); ok {
+		return x.File
+	}
+	return nil
+}
+
+func (x *Record) GetInfo() string {
+	if x != nil {
+		return x.Info
+	}
+	return ""
+}
+
+func (x *Record) GetCreatedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return nil
+}
+
+func (x *Record) GetUpdatedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.UpdatedAt
+	}
+	return nil
+}
+
+type isRecord_Data interface {
+	isRecord_Data()
+}
+
+type Record_Creds struct {
+	Creds *Creds `protobuf:"bytes,4,opt,name=creds,proto3,oneof"`
+}
+
+type Record_Note struct {
+	Note *Note `protobuf:"bytes,5,opt,name=note,proto3,oneof"`
+}
+
+type Record_Card struct {
+	Card *Card `protobuf:"bytes,6,opt,name=card,proto3,oneof"`
+}
+
+type Record_File struct {
+	File *File `protobuf:"bytes,7,opt,name=file,proto3,oneof"`
+}
+
+func (*Record_Creds) isRecord_Data() {}
+
+func (*Record_Note) isRecord_Data() {}
+
+func (*Record_Card) isRecord_Data() {}
+
+func (*Record_File) isRecord_Data() {}
+
+type Storage struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Record []*Record `protobuf:"bytes,1,rep,name=record,proto3" json:"record,omitempty"`
+}
+
+func (x *Storage) Reset() {
+	*x = Storage{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_vault_proto_msgTypes[6]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *Storage) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Storage) ProtoMessage() {}
+
+func (x *Storage) ProtoReflect() protoreflect.Message {
+	mi := &file_vault_proto_msgTypes[6]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Storage.ProtoReflect.Descriptor instead.
+func (*Storage) Descriptor() ([]byte, []int) {
+	return file_vault_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *Storage) GetRecord() []*Record {
+	if x != nil {
+		return x.Record
+	}
+	return nil
+}
+
 var File_vault_proto protoreflect.FileDescriptor
 
 var file_vault_proto_rawDesc = []byte{
 	0x0a, 0x0b, 0x76, 0x61, 0x75, 0x6c, 0x74, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x12, 0x05, 0x76,
-	0x61, 0x75, 0x6c, 0x74, 0x42, 0x49, 0x5a, 0x47, 0x67, 0x69, 0x74, 0x68, 0x75, 0x62, 0x2e, 0x63,
-	0x6f, 0x6d, 0x2f, 0x66, 0x69, 0x73, 0x68, 0x75, 0x73, 0x2f, 0x67, 0x6f, 0x2d, 0x61, 0x64, 0x76,
-	0x61, 0x6e, 0x63, 0x65, 0x64, 0x2d, 0x67, 0x6f, 0x70, 0x68, 0x6b, 0x65, 0x65, 0x70, 0x65, 0x72,
-	0x2f, 0x69, 0x6e, 0x74, 0x65, 0x72, 0x6e, 0x61, 0x6c, 0x2f, 0x61, 0x64, 0x61, 0x70, 0x74, 0x65,
-	0x72, 0x2f, 0x68, 0x61, 0x6e, 0x64, 0x6c, 0x65, 0x72, 0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62,
-	0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x61, 0x75, 0x6c, 0x74, 0x1a, 0x1f, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2f, 0x70, 0x72, 0x6f,
+	0x74, 0x6f, 0x62, 0x75, 0x66, 0x2f, 0x74, 0x69, 0x6d, 0x65, 0x73, 0x74, 0x61, 0x6d, 0x70, 0x2e,
+	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x22, 0x39, 0x0a, 0x05, 0x43, 0x72, 0x65, 0x64, 0x73, 0x12, 0x14,
+	0x0a, 0x05, 0x6c, 0x6f, 0x67, 0x69, 0x6e, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x6c,
+	0x6f, 0x67, 0x69, 0x6e, 0x12, 0x1a, 0x0a, 0x08, 0x70, 0x61, 0x73, 0x73, 0x77, 0x6f, 0x72, 0x64,
+	0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x08, 0x70, 0x61, 0x73, 0x73, 0x77, 0x6f, 0x72, 0x64,
+	0x22, 0x20, 0x0a, 0x04, 0x4e, 0x6f, 0x74, 0x65, 0x12, 0x18, 0x0a, 0x07, 0x63, 0x6f, 0x6e, 0x74,
+	0x65, 0x6e, 0x74, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x07, 0x63, 0x6f, 0x6e, 0x74, 0x65,
+	0x6e, 0x74, 0x22, 0x37, 0x0a, 0x0b, 0x43, 0x61, 0x72, 0x64, 0x45, 0x78, 0x70, 0x44, 0x61, 0x74,
+	0x65, 0x12, 0x14, 0x0a, 0x05, 0x6d, 0x6f, 0x6e, 0x74, 0x68, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0d,
+	0x52, 0x05, 0x6d, 0x6f, 0x6e, 0x74, 0x68, 0x12, 0x12, 0x0a, 0x04, 0x79, 0x65, 0x61, 0x72, 0x18,
+	0x02, 0x20, 0x01, 0x28, 0x0d, 0x52, 0x04, 0x79, 0x65, 0x61, 0x72, 0x22, 0x89, 0x01, 0x0a, 0x04,
+	0x43, 0x61, 0x72, 0x64, 0x12, 0x16, 0x0a, 0x06, 0x6e, 0x75, 0x6d, 0x62, 0x65, 0x72, 0x18, 0x01,
+	0x20, 0x01, 0x28, 0x09, 0x52, 0x06, 0x6e, 0x75, 0x6d, 0x62, 0x65, 0x72, 0x12, 0x1f, 0x0a, 0x0b,
+	0x68, 0x6f, 0x6c, 0x64, 0x65, 0x72, 0x5f, 0x6e, 0x61, 0x6d, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28,
+	0x09, 0x52, 0x0a, 0x68, 0x6f, 0x6c, 0x64, 0x65, 0x72, 0x4e, 0x61, 0x6d, 0x65, 0x12, 0x2d, 0x0a,
+	0x08, 0x65, 0x78, 0x70, 0x5f, 0x64, 0x61, 0x74, 0x65, 0x18, 0x03, 0x20, 0x01, 0x28, 0x0b, 0x32,
+	0x12, 0x2e, 0x76, 0x61, 0x75, 0x6c, 0x74, 0x2e, 0x43, 0x61, 0x72, 0x64, 0x45, 0x78, 0x70, 0x44,
+	0x61, 0x74, 0x65, 0x52, 0x07, 0x65, 0x78, 0x70, 0x44, 0x61, 0x74, 0x65, 0x12, 0x19, 0x0a, 0x08,
+	0x63, 0x76, 0x63, 0x5f, 0x63, 0x6f, 0x64, 0x65, 0x18, 0x04, 0x20, 0x01, 0x28, 0x09, 0x52, 0x07,
+	0x63, 0x76, 0x63, 0x43, 0x6f, 0x64, 0x65, 0x22, 0x7d, 0x0a, 0x04, 0x46, 0x69, 0x6c, 0x65, 0x12,
+	0x1a, 0x0a, 0x08, 0x66, 0x69, 0x6c, 0x65, 0x6e, 0x61, 0x6d, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28,
+	0x09, 0x52, 0x08, 0x66, 0x69, 0x6c, 0x65, 0x6e, 0x61, 0x6d, 0x65, 0x12, 0x1b, 0x0a, 0x09, 0x6d,
+	0x69, 0x6d, 0x65, 0x5f, 0x74, 0x79, 0x70, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x08,
+	0x6d, 0x69, 0x6d, 0x65, 0x54, 0x79, 0x70, 0x65, 0x12, 0x1a, 0x0a, 0x08, 0x66, 0x69, 0x6c, 0x65,
+	0x73, 0x69, 0x7a, 0x65, 0x18, 0x03, 0x20, 0x01, 0x28, 0x04, 0x52, 0x08, 0x66, 0x69, 0x6c, 0x65,
+	0x73, 0x69, 0x7a, 0x65, 0x12, 0x17, 0x0a, 0x04, 0x64, 0x61, 0x74, 0x61, 0x18, 0x04, 0x20, 0x01,
+	0x28, 0x0c, 0x48, 0x00, 0x52, 0x04, 0x64, 0x61, 0x74, 0x61, 0x88, 0x01, 0x01, 0x42, 0x07, 0x0a,
+	0x05, 0x5f, 0x64, 0x61, 0x74, 0x61, 0x22, 0xdf, 0x02, 0x0a, 0x06, 0x52, 0x65, 0x63, 0x6f, 0x72,
+	0x64, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x02, 0x69,
+	0x64, 0x12, 0x24, 0x0a, 0x04, 0x6b, 0x69, 0x6e, 0x64, 0x18, 0x03, 0x20, 0x01, 0x28, 0x0e, 0x32,
+	0x10, 0x2e, 0x76, 0x61, 0x75, 0x6c, 0x74, 0x2e, 0x56, 0x61, 0x75, 0x6c, 0x74, 0x4b, 0x69, 0x6e,
+	0x64, 0x52, 0x04, 0x6b, 0x69, 0x6e, 0x64, 0x12, 0x24, 0x0a, 0x05, 0x63, 0x72, 0x65, 0x64, 0x73,
+	0x18, 0x04, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x0c, 0x2e, 0x76, 0x61, 0x75, 0x6c, 0x74, 0x2e, 0x43,
+	0x72, 0x65, 0x64, 0x73, 0x48, 0x00, 0x52, 0x05, 0x63, 0x72, 0x65, 0x64, 0x73, 0x12, 0x21, 0x0a,
+	0x04, 0x6e, 0x6f, 0x74, 0x65, 0x18, 0x05, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x0b, 0x2e, 0x76, 0x61,
+	0x75, 0x6c, 0x74, 0x2e, 0x4e, 0x6f, 0x74, 0x65, 0x48, 0x00, 0x52, 0x04, 0x6e, 0x6f, 0x74, 0x65,
+	0x12, 0x21, 0x0a, 0x04, 0x63, 0x61, 0x72, 0x64, 0x18, 0x06, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x0b,
+	0x2e, 0x76, 0x61, 0x75, 0x6c, 0x74, 0x2e, 0x43, 0x61, 0x72, 0x64, 0x48, 0x00, 0x52, 0x04, 0x63,
+	0x61, 0x72, 0x64, 0x12, 0x21, 0x0a, 0x04, 0x66, 0x69, 0x6c, 0x65, 0x18, 0x07, 0x20, 0x01, 0x28,
+	0x0b, 0x32, 0x0b, 0x2e, 0x76, 0x61, 0x75, 0x6c, 0x74, 0x2e, 0x46, 0x69, 0x6c, 0x65, 0x48, 0x00,
+	0x52, 0x04, 0x66, 0x69, 0x6c, 0x65, 0x12, 0x12, 0x0a, 0x04, 0x69, 0x6e, 0x66, 0x6f, 0x18, 0x08,
+	0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x69, 0x6e, 0x66, 0x6f, 0x12, 0x39, 0x0a, 0x0a, 0x63, 0x72,
+	0x65, 0x61, 0x74, 0x65, 0x64, 0x5f, 0x61, 0x74, 0x18, 0x09, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x1a,
+	0x2e, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66,
+	0x2e, 0x54, 0x69, 0x6d, 0x65, 0x73, 0x74, 0x61, 0x6d, 0x70, 0x52, 0x09, 0x63, 0x72, 0x65, 0x61,
+	0x74, 0x65, 0x64, 0x41, 0x74, 0x12, 0x39, 0x0a, 0x0a, 0x75, 0x70, 0x64, 0x61, 0x74, 0x65, 0x64,
+	0x5f, 0x61, 0x74, 0x18, 0x0a, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x1a, 0x2e, 0x67, 0x6f, 0x6f, 0x67,
+	0x6c, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2e, 0x54, 0x69, 0x6d, 0x65,
+	0x73, 0x74, 0x61, 0x6d, 0x70, 0x52, 0x09, 0x75, 0x70, 0x64, 0x61, 0x74, 0x65, 0x64, 0x41, 0x74,
+	0x42, 0x06, 0x0a, 0x04, 0x64, 0x61, 0x74, 0x61, 0x22, 0x30, 0x0a, 0x07, 0x53, 0x74, 0x6f, 0x72,
+	0x61, 0x67, 0x65, 0x12, 0x25, 0x0a, 0x06, 0x72, 0x65, 0x63, 0x6f, 0x72, 0x64, 0x18, 0x01, 0x20,
+	0x03, 0x28, 0x0b, 0x32, 0x0d, 0x2e, 0x76, 0x61, 0x75, 0x6c, 0x74, 0x2e, 0x52, 0x65, 0x63, 0x6f,
+	0x72, 0x64, 0x52, 0x06, 0x72, 0x65, 0x63, 0x6f, 0x72, 0x64, 0x2a, 0x43, 0x0a, 0x09, 0x56, 0x61,
+	0x75, 0x6c, 0x74, 0x4b, 0x69, 0x6e, 0x64, 0x12, 0x0d, 0x0a, 0x09, 0x55, 0x4e, 0x44, 0x45, 0x46,
+	0x49, 0x4e, 0x45, 0x44, 0x10, 0x00, 0x12, 0x09, 0x0a, 0x05, 0x43, 0x52, 0x45, 0x44, 0x53, 0x10,
+	0x01, 0x12, 0x08, 0x0a, 0x04, 0x4e, 0x4f, 0x54, 0x45, 0x10, 0x02, 0x12, 0x08, 0x0a, 0x04, 0x43,
+	0x41, 0x52, 0x44, 0x10, 0x03, 0x12, 0x08, 0x0a, 0x04, 0x46, 0x49, 0x4c, 0x45, 0x10, 0x04, 0x42,
+	0x49, 0x5a, 0x47, 0x67, 0x69, 0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x66, 0x69,
+	0x73, 0x68, 0x75, 0x73, 0x2f, 0x67, 0x6f, 0x2d, 0x61, 0x64, 0x76, 0x61, 0x6e, 0x63, 0x65, 0x64,
+	0x2d, 0x67, 0x6f, 0x70, 0x68, 0x6b, 0x65, 0x65, 0x70, 0x65, 0x72, 0x2f, 0x69, 0x6e, 0x74, 0x65,
+	0x72, 0x6e, 0x61, 0x6c, 0x2f, 0x61, 0x64, 0x61, 0x70, 0x74, 0x65, 0x72, 0x2f, 0x68, 0x61, 0x6e,
+	0x64, 0x6c, 0x65, 0x72, 0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74,
+	0x6f, 0x33,
 }
 
-var file_vault_proto_goTypes = []any{}
+var (
+	file_vault_proto_rawDescOnce sync.Once
+	file_vault_proto_rawDescData = file_vault_proto_rawDesc
+)
+
+func file_vault_proto_rawDescGZIP() []byte {
+	file_vault_proto_rawDescOnce.Do(func() {
+		file_vault_proto_rawDescData = protoimpl.X.CompressGZIP(file_vault_proto_rawDescData)
+	})
+	return file_vault_proto_rawDescData
+}
+
+var file_vault_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
+var file_vault_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
+var file_vault_proto_goTypes = []any{
+	(VaultKind)(0),                // 0: vault.VaultKind
+	(*Creds)(nil),                 // 1: vault.Creds
+	(*Note)(nil),                  // 2: vault.Note
+	(*CardExpDate)(nil),           // 3: vault.CardExpDate
+	(*Card)(nil),                  // 4: vault.Card
+	(*File)(nil),                  // 5: vault.File
+	(*Record)(nil),                // 6: vault.Record
+	(*Storage)(nil),               // 7: vault.Storage
+	(*timestamppb.Timestamp)(nil), // 8: google.protobuf.Timestamp
+}
 var file_vault_proto_depIdxs = []int32{
-	0, // [0:0] is the sub-list for method output_type
-	0, // [0:0] is the sub-list for method input_type
-	0, // [0:0] is the sub-list for extension type_name
-	0, // [0:0] is the sub-list for extension extendee
-	0, // [0:0] is the sub-list for field type_name
+	3, // 0: vault.Card.exp_date:type_name -> vault.CardExpDate
+	0, // 1: vault.Record.kind:type_name -> vault.VaultKind
+	1, // 2: vault.Record.creds:type_name -> vault.Creds
+	2, // 3: vault.Record.note:type_name -> vault.Note
+	4, // 4: vault.Record.card:type_name -> vault.Card
+	5, // 5: vault.Record.file:type_name -> vault.File
+	8, // 6: vault.Record.created_at:type_name -> google.protobuf.Timestamp
+	8, // 7: vault.Record.updated_at:type_name -> google.protobuf.Timestamp
+	6, // 8: vault.Storage.record:type_name -> vault.Record
+	9, // [9:9] is the sub-list for method output_type
+	9, // [9:9] is the sub-list for method input_type
+	9, // [9:9] is the sub-list for extension type_name
+	9, // [9:9] is the sub-list for extension extendee
+	0, // [0:9] is the sub-list for field type_name
 }
 
 func init() { file_vault_proto_init() }
@@ -45,18 +688,113 @@ func file_vault_proto_init() {
 	if File_vault_proto != nil {
 		return
 	}
+	if !protoimpl.UnsafeEnabled {
+		file_vault_proto_msgTypes[0].Exporter = func(v any, i int) any {
+			switch v := v.(*Creds); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_vault_proto_msgTypes[1].Exporter = func(v any, i int) any {
+			switch v := v.(*Note); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_vault_proto_msgTypes[2].Exporter = func(v any, i int) any {
+			switch v := v.(*CardExpDate); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_vault_proto_msgTypes[3].Exporter = func(v any, i int) any {
+			switch v := v.(*Card); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_vault_proto_msgTypes[4].Exporter = func(v any, i int) any {
+			switch v := v.(*File); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_vault_proto_msgTypes[5].Exporter = func(v any, i int) any {
+			switch v := v.(*Record); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_vault_proto_msgTypes[6].Exporter = func(v any, i int) any {
+			switch v := v.(*Storage); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+	}
+	file_vault_proto_msgTypes[4].OneofWrappers = []any{}
+	file_vault_proto_msgTypes[5].OneofWrappers = []any{
+		(*Record_Creds)(nil),
+		(*Record_Note)(nil),
+		(*Record_Card)(nil),
+		(*Record_File)(nil),
+	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_vault_proto_rawDesc,
-			NumEnums:      0,
-			NumMessages:   0,
+			NumEnums:      1,
+			NumMessages:   7,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
 		GoTypes:           file_vault_proto_goTypes,
 		DependencyIndexes: file_vault_proto_depIdxs,
+		EnumInfos:         file_vault_proto_enumTypes,
+		MessageInfos:      file_vault_proto_msgTypes,
 	}.Build()
 	File_vault_proto = out.File
 	file_vault_proto_rawDesc = nil

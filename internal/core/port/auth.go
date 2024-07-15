@@ -10,5 +10,7 @@ import (
 type AuthService interface {
 	// LoginUser authenticates a user by login and password and returns a token
 	LoginUser(ctx context.Context, login, password string) (token string, err error)
+
+	// CreateToken returns a token for user
 	CreateToken(context.Context, domain.User) (token string, err error)
 }

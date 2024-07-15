@@ -19,7 +19,8 @@ type (
 
 	// App contains all the environment variables for the application
 	App struct {
-		LogLevel string
+		LogLevel  string
+		SecretKey string
 	}
 
 	// DB contains all the environment variables for the database
@@ -46,7 +47,8 @@ func New(file string) (*Config, error) {
 	}
 
 	app := &App{
-		LogLevel: os.Getenv("APP_LOG_LEVEL"),
+		LogLevel:  os.Getenv("APP_LOG_LEVEL"),
+		SecretKey: os.Getenv("APP_SECRET_KEY"),
 	}
 
 	db := &DB{

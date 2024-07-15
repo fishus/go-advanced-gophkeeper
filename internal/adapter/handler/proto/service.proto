@@ -5,6 +5,7 @@ package service;
 option go_package = "github.com/fishus/go-advanced-gophkeeper/internal/adapter/handler/proto";
 
 import "user.proto";
+import "vault.proto";
 
 message RegisterUserRequest {
   user.User user = 1;
@@ -24,14 +25,16 @@ message LoginUserResponse {
   string token = 1;
 }
 
-message TestRequest {
+message AddVaultRecordRequest {
+  vault.Record record = 1;
 }
 
-message TestResponse {
+message AddVaultRecordResponse {
+  vault.Record record = 1;
 }
 
 service Vault {
   rpc RegisterUser(RegisterUserRequest) returns (RegisterUserResponse);
   rpc LoginUser(LoginUserRequest) returns (LoginUserResponse);
-  rpc Test(TestRequest) returns (TestResponse);
+  rpc AddVaultRecord(AddVaultRecordRequest) returns (AddVaultRecordResponse);
 }

@@ -4,33 +4,58 @@ package vault;
 
 option go_package = "github.com/fishus/go-advanced-gophkeeper/internal/adapter/handler/proto";
 
-//message Creds {
-//  string login = 1;
-//  string password = 2;
-//}
-//
-//message Card {
-//  string number = 1;
-//  string name = 2;
-//  string code = 3;
-//}
-//
-//message StorageCell {
-//  string id = 1;
-//  oneof data {
-//    Creds creds = 2;
-//    Card card = 3;
-//  }
-//}
-//
-//message Storage {
-//    repeated StorageCell data = 1;
-//}
-//
-//message AddVaultRequest {
-//  User user = 1;
-//  Storage storage = 2;
-//}
-//
-//message AddVaultResponse {
-//}
+import "google/protobuf/timestamp.proto";
+
+message Creds {
+  string login = 1;
+  string password = 2;
+}
+
+message Note {
+  string content = 1;
+}
+
+message CardExpDate {
+  uint32 month = 1;
+  uint32 year = 2;
+}
+
+message Card {
+  string number = 1;
+  string holder_name = 2;
+  CardExpDate exp_date = 3;
+  string cvc_code = 4;
+}
+
+message File {
+  string filename = 1;
+  string mime_type = 2;
+  uint64 filesize = 3;
+  optional bytes data = 4;
+}
+
+enum VaultKind {
+  UNDEFINED = 0;
+  CREDS = 1;
+  NOTE = 2;
+  CARD = 3;
+  FILE = 4;
+}
+
+message Record {
+  string id = 1;
+  VaultKind kind = 3;
+  oneof data {
+    Creds creds = 4;
+    Note note = 5;
+    Card card = 6;
+    File file = 7;
+  }
+  string info = 8;
+  google.protobuf.Timestamp created_at = 9;
+  google.protobuf.Timestamp updated_at = 10;
+}
+
+message Storage {
+    repeated Record record = 1;
+}

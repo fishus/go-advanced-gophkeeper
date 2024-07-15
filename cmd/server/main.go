@@ -10,6 +10,7 @@ import (
 
 	"github.com/fishus/go-advanced-gophkeeper/internal/adapter/auth/paseto"
 	"github.com/fishus/go-advanced-gophkeeper/internal/adapter/config"
+	"github.com/fishus/go-advanced-gophkeeper/internal/adapter/crypt/gsm"
 	handler "github.com/fishus/go-advanced-gophkeeper/internal/adapter/handler/grpc"
 	"github.com/fishus/go-advanced-gophkeeper/internal/adapter/handler/grpc/interceptor"
 	pb "github.com/fishus/go-advanced-gophkeeper/internal/adapter/handler/proto"
@@ -77,8 +78,22 @@ func main() {
 	// Auth service
 	authService := service.NewAuthService(userRepo, tokenAdapter)
 
+	// Crypto adapter
+	cryptAdapter, err := gsm.New([]byte(config.App.SecretKey))
+	if err != nil {
+		err = fmt.Errorf("error initializing crypto adapter: %w", err)
+		slog.Error(err.Error())
+		panic(err)
+	}
+
+	// Vault repository adapter and vault service
+	vaultRepo := repository.NewVaultRepository(db, cryptAdapter)
+	vaultService := service.NewVaultService(vaultRepo)
+
+	fmt.Println("Starting the server")
+
 	// Handler adapter
-	server := handler.NewServer(userService, authService)
+	server := handler.NewServer(userService, authService, vaultService)
 
 	listen, err := net.Listen("tcp", config.GRPC.Address)
 	if err != nil {
@@ -96,10 +111,9 @@ func main() {
 	pb.RegisterVaultServer(s, server)
 
 	if err := s.Serve(listen); err != nil {
+		fmt.Printf("%#v", err)
 		err = fmt.Errorf("error starting the GRPC server: %w", err)
 		slog.Error(err.Error())
 		panic(err)
 	}
-
-	slog.Info("Successfully started the GRPC server", "address", config.GRPC.Address)
 }

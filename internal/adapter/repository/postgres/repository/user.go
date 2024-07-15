@@ -13,7 +13,7 @@ import (
 )
 
 // UserRepository implements port.UserRepository interface
-// and provides an access to the postgres database
+// and provides access to the postgres database
 type UserRepository struct {
 	db *postgres.DB
 }

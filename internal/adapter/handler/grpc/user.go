@@ -23,10 +23,10 @@ func (s *server) RegisterUser(ctx context.Context, in *pb.RegisterUserRequest) (
 
 	// Validate incoming data
 	if in.User.Login == "" {
-		return nil, status.Errorf(codes.InvalidArgument, "User login cannot be empty")
+		return nil, status.Errorf(codes.InvalidArgument, "User login is required")
 	}
 	if userPassword == "" {
-		return nil, status.Errorf(codes.InvalidArgument, "User password cannot be empty")
+		return nil, status.Errorf(codes.InvalidArgument, "User password is required")
 	}
 
 	usr := domain.User{

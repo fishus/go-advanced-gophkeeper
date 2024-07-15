@@ -28,14 +28,14 @@ func (s *userService) RegisterUser(ctx context.Context, user domain.User) (*doma
 
 	hashedPassword, err := util.HashPassword(user.Password)
 	if err != nil {
-		return nil, fmt.Errorf("user was not created: %w", err)
+		return nil, fmt.Errorf("user not created: %w", err)
 	}
 
 	user.Password = hashedPassword
 
 	usr, err := s.userRepo.CreateUser(ctx, user)
 	if err != nil {
-		return nil, fmt.Errorf("user was not created: %w", err)
+		return nil, fmt.Errorf("user not created: %w", err)
 	}
 
 	return usr, nil
