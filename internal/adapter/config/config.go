@@ -2,10 +2,9 @@ package config
 
 import (
 	"fmt"
-	"os"
 	"time"
 
-	"github.com/joho/godotenv"
+	"github.com/spf13/viper"
 )
 
 type (
@@ -39,33 +38,42 @@ type (
 	}
 )
 
-// New creates a new config instance
-func New(file string) (*Config, error) {
-	err := godotenv.Load(file)
-	if err != nil {
+// New creates a new config instance from .env or .yaml file
+func New(filename string) (*Config, error) {
+	viper.SetConfigFile(filename)
+	if err := viper.ReadInConfig(); err != nil {
 		return nil, fmt.Errorf("error loading .env file: %w", err)
 	}
 
+	viper.RegisterAlias("APP_LOG_LEVEL", "app.log_level")
+	viper.RegisterAlias("APP_SECRET_KEY", "app.secret_key")
+	viper.RegisterAlias("DB_URI", "db.uri")
+	viper.RegisterAlias("GRPC_ADDRESS", "grpc.address")
+	viper.RegisterAlias("TOKEN_DURATION", "token.duration")
+
+	viper.SetDefault("APP_LOG_LEVEL", "debug")
+	viper.SetDefault("GRPC_ADDRESS", ":8080")
+	viper.SetDefault("TOKEN_DURATION", "15m")
+
 	app := &App{
-		LogLevel:  os.Getenv("APP_LOG_LEVEL"),
-		SecretKey: os.Getenv("APP_SECRET_KEY"),
+		LogLevel:  viper.GetString("APP_LOG_LEVEL"),
+		SecretKey: viper.GetString("APP_SECRET_KEY"),
 	}
 
 	db := &DB{
-		URI: os.Getenv("DB_URI"),
+		URI: viper.GetString("DB_URI"),
 	}
 
 	grpc := &GRPC{
-		Address: os.Getenv("GRPC_ADDRESS"),
+		Address: viper.GetString("GRPC_ADDRESS"),
 	}
 
-	tokenDuration, err := time.ParseDuration(os.Getenv("TOKEN_DURATION"))
-	if err != nil {
-		return nil, fmt.Errorf("parse .env error: invalid token duration value. %w", err)
-	}
+	tokenDuration := viper.GetDuration("TOKEN_DURATION")
 	token := &Token{
 		Duration: tokenDuration,
 	}
+
+	viper.Reset()
 
 	return &Config{
 		app,

@@ -1,11 +1,11 @@
 package util
 
 import (
-	"os"
+	"bytes"
 	"text/template"
 )
 
-func PrintBuildInfo(date, ver string) {
+func GetBuildInfo(date, ver string) string {
 	type buildInfo struct {
 		Date    string
 		Version string
@@ -25,10 +25,12 @@ Build version: {{.Version}}
 
 	t := template.Must(template.New("list").Parse(tpl))
 
-	err := t.Execute(os.Stdout, info)
+	buf := new(bytes.Buffer)
+	err := t.Execute(buf, info)
 	if err != nil {
 		panic(err)
 	}
+	return buf.String()
 }
 
 func defaultValue(v, defaultValue string) string {

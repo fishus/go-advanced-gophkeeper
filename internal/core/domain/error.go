@@ -7,6 +7,7 @@ var (
 	ErrAlreadyExists   = errors.New("already exists")
 	ErrNotFound        = errors.New("not found")
 	ErrUserNotFound    = errors.New("user not found")
+	ErrTimeout         = errors.New("timeout exceeded")
 
 	ErrTokenDuration      = errors.New("invalid token duration format")
 	ErrTokenCreation      = errors.New("error creating token")

@@ -25,7 +25,7 @@ var buildDate string
 var buildVersion string
 
 func main() {
-	util.PrintBuildInfo(buildDate, buildVersion)
+	fmt.Println(util.GetBuildInfo(buildDate, buildVersion))
 
 	// Load environment variables
 	config, err := config.New(".server.env")
@@ -90,7 +90,7 @@ func main() {
 	vaultRepo := repository.NewVaultRepository(db, cryptAdapter)
 	vaultService := service.NewVaultService(vaultRepo)
 
-	fmt.Println("Starting the server")
+	fmt.Println("Starting the grpc server")
 
 	// Handler adapter
 	server := handler.NewServer(userService, authService, vaultService)
