@@ -41,6 +41,7 @@ func main() {
 		slog.Error(err.Error())
 		panic(err)
 	}
+
 	clientService := service.NewClientService(apiAdapter)
 
 	cli := cobra.New(clientService)

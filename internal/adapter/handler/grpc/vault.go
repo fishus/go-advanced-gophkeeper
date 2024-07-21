@@ -27,10 +27,11 @@ func (s *server) AddVaultRecord(ctx context.Context, in *pb.AddVaultRecordReques
 		return nil, status.Error(codes.Internal, "Something went wrong")
 	}
 
-	rec, err := protoVaultRecordToDomain(in.GetRecord(), userID)
+	rec, err := ProtoVaultRecordToDomain(in.GetRecord())
 	if err != nil {
 		return nil, err
 	}
+	rec.UserID = userID
 
 	rec, err = s.vaultService.AddVaultRecord(ctx, *rec)
 	if err != nil {
@@ -42,7 +43,7 @@ func (s *server) AddVaultRecord(ctx context.Context, in *pb.AddVaultRecordReques
 		}
 	}
 
-	pbRecord, err := domainVaultRecordToProto(*rec)
+	pbRecord, err := DomainVaultRecordToProto(*rec)
 	if err != nil {
 		return nil, err
 	}
@@ -65,7 +66,7 @@ func getUserIDFromContext(ctx context.Context) (userID uuid.UUID, err error) {
 	return
 }
 
-func protoVaultRecordToDomain(r *pb.Record, userID uuid.UUID) (*domain.VaultRecord, error) {
+func ProtoVaultRecordToDomain(r *pb.Record) (*domain.VaultRecord, error) {
 	if r == nil {
 		return nil, status.Errorf(codes.InvalidArgument, "Vault record is required")
 	}
@@ -158,7 +159,6 @@ func protoVaultRecordToDomain(r *pb.Record, userID uuid.UUID) (*domain.VaultReco
 
 	rec := &domain.VaultRecord{
 		ID:        recordID,
-		UserID:    userID,
 		Kind:      recordKind,
 		Data:      recData,
 		CreatedAt: recordCreatedAt,
@@ -168,7 +168,7 @@ func protoVaultRecordToDomain(r *pb.Record, userID uuid.UUID) (*domain.VaultReco
 	return rec, nil
 }
 
-func domainVaultRecordToProto(rec domain.VaultRecord) (*pb.Record, error) {
+func DomainVaultRecordToProto(rec domain.VaultRecord) (*pb.Record, error) {
 	err := rec.Kind.Validate()
 	if err != nil {
 		return nil, err

@@ -57,3 +57,26 @@ func (s *clientService) UserRegister(ctx context.Context, login, password string
 	}
 	return
 }
+
+func (s *clientService) VaultAddNote(ctx context.Context, data domain.VaultDataNote) (*domain.VaultRecord, error) {
+	rec := &domain.VaultRecord{
+		ID:        uuid.New(),
+		Kind:      domain.VaultKindNote,
+		Data:      data,
+		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
+	}
+
+	// TODO save into local db
+
+	ctx, err := s.apiAdapter.SetToken(ctx, s.token)
+	if err != nil {
+		return nil, err
+	}
+	rec, err = s.apiAdapter.VaultAddRecord(ctx, *rec)
+	if err != nil {
+		return nil, err
+	}
+
+	return rec, nil
+}

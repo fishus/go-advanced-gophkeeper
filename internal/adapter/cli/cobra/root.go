@@ -24,6 +24,7 @@ func (cli *cliAdapter) rootCmd(buildDate, buildVersion string) *cobra.Command {
 	}
 
 	c.AddCommand(cli.userCmd())
+	c.AddCommand(cli.vaultCmd())
 
 	return c
 }

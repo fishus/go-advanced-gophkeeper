@@ -50,8 +50,8 @@ func AuthUnaryServerInterceptor(tokenAdapter port.TokenAdapter) grpc.UnaryServer
 			md = metadata.New(map[string]string{})
 		}
 		md.Append("X-User-Id", payload.UserID.String())
-		newCtx := metadata.NewIncomingContext(ctx, md)
+		ctx = metadata.NewIncomingContext(ctx, md)
 
-		return handler(newCtx, req)
+		return handler(ctx, req)
 	}
 }
