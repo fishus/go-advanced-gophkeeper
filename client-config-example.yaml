@@ -1,5 +1,5 @@
 grpc:
-  address: "localhost:8080"
+  address: "localhost:443"
 
 app:
   log_level: warn

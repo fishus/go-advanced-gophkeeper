@@ -21,3 +21,8 @@ vendor/
 # Env
 .env
 .server.env
+
+# sencetive data
+cert/
+client-config.yaml
+.server.env

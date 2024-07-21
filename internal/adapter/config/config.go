@@ -13,6 +13,7 @@ type (
 		App   *App
 		DB    *DB
 		GRPC  *GRPC
+		TLS   *TLS
 		Token *Token
 	}
 
@@ -32,6 +33,11 @@ type (
 		Address string
 	}
 
+	TLS struct {
+		CertFile string
+		KeyFile  string
+	}
+
 	// Token contains all the environment variables for the token service
 	Token struct {
 		Duration time.Duration
@@ -49,6 +55,8 @@ func New(filename string) (*Config, error) {
 	viper.RegisterAlias("APP_SECRET_KEY", "app.secret_key")
 	viper.RegisterAlias("DB_URI", "db.uri")
 	viper.RegisterAlias("GRPC_ADDRESS", "grpc.address")
+	viper.RegisterAlias("TLS_CERT_FILE", "tls.cert_file")
+	viper.RegisterAlias("TLS_KEY_FILE", "tls.key_file")
 	viper.RegisterAlias("TOKEN_DURATION", "token.duration")
 
 	viper.SetDefault("APP_LOG_LEVEL", "debug")
@@ -68,6 +76,11 @@ func New(filename string) (*Config, error) {
 		Address: viper.GetString("GRPC_ADDRESS"),
 	}
 
+	tls := &TLS{
+		CertFile: viper.GetString("TLS_CERT_FILE"),
+		KeyFile:  viper.GetString("TLS_KEY_FILE"),
+	}
+
 	tokenDuration := viper.GetDuration("TOKEN_DURATION")
 	token := &Token{
 		Duration: tokenDuration,
@@ -79,6 +92,7 @@ func New(filename string) (*Config, error) {
 		app,
 		db,
 		grpc,
+		tls,
 		token,
 	}, nil
 }

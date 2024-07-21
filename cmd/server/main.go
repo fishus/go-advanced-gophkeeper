@@ -4,16 +4,11 @@ import (
 	"context"
 	"fmt"
 	"log/slog"
-	"net"
-
-	"google.golang.org/grpc"
 
 	"github.com/fishus/go-advanced-gophkeeper/internal/adapter/auth/paseto"
 	"github.com/fishus/go-advanced-gophkeeper/internal/adapter/config"
 	"github.com/fishus/go-advanced-gophkeeper/internal/adapter/crypt/gsm"
 	handler "github.com/fishus/go-advanced-gophkeeper/internal/adapter/handler/grpc"
-	"github.com/fishus/go-advanced-gophkeeper/internal/adapter/handler/grpc/interceptor"
-	pb "github.com/fishus/go-advanced-gophkeeper/internal/adapter/handler/proto"
 	"github.com/fishus/go-advanced-gophkeeper/internal/adapter/logger"
 	"github.com/fishus/go-advanced-gophkeeper/internal/adapter/repository/postgres"
 	"github.com/fishus/go-advanced-gophkeeper/internal/adapter/repository/postgres/repository"
@@ -93,26 +88,14 @@ func main() {
 	fmt.Println("Starting the grpc server")
 
 	// Handler adapter
-	server := handler.NewServer(userService, authService, vaultService)
-
-	listen, err := net.Listen("tcp", config.GRPC.Address)
+	server := handler.NewServer(
+		handler.Config{
+			Address:     config.GRPC.Address,
+			TLSCertFile: config.TLS.CertFile,
+			TLSKeyFile:  config.TLS.KeyFile,
+		}, tokenAdapter, userService, authService, vaultService)
+	err = server.Serve()
 	if err != nil {
-		err = fmt.Errorf("error open connection: %w", err)
-		slog.Error(err.Error())
-		panic(err)
-	}
-
-	serverOpts := []grpc.ServerOption{}
-	serverOpts = append(serverOpts, grpc.ChainUnaryInterceptor(
-		interceptor.AuthUnaryServerInterceptor(tokenAdapter),
-	))
-	s := grpc.NewServer(serverOpts...)
-
-	pb.RegisterVaultServer(s, server)
-
-	if err := s.Serve(listen); err != nil {
-		fmt.Printf("%#v", err)
-		err = fmt.Errorf("error starting the GRPC server: %w", err)
 		slog.Error(err.Error())
 		panic(err)
 	}

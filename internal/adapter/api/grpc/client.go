@@ -1,10 +1,11 @@
 package grpc
 
 import (
+	"crypto/tls"
 	"fmt"
 
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
+	"google.golang.org/grpc/credentials"
 
 	pb "github.com/fishus/go-advanced-gophkeeper/internal/adapter/handler/proto"
 	"github.com/fishus/go-advanced-gophkeeper/internal/core/port"
@@ -24,8 +25,10 @@ func New(address string) (port.ApiAdapter, error) {
 }
 
 func (api *ApiAdapter) Open() error {
-	conn, err := grpc.NewClient(api.address, grpc.WithTransportCredentials(insecure.NewCredentials()))
-	// TODO TLS
+	conn, err := grpc.NewClient(api.address, grpc.WithTransportCredentials(credentials.NewTLS(&tls.Config{
+		ClientAuth:         tls.NoClientCert,
+		InsecureSkipVerify: true,
+	})))
 	// TODO UnaryAuthInterceptor
 	if err != nil {
 		err = fmt.Errorf("failed to create grpc connection: %w", err)
