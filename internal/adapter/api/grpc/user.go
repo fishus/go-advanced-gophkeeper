@@ -3,9 +3,7 @@ package grpc
 import (
 	"context"
 	"errors"
-	"time"
 
-	"github.com/google/uuid"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/timestamppb"
@@ -37,16 +35,15 @@ func (api *ApiAdapter) LoginUser(ctx context.Context, login, password string) (t
 	return resp.Token, nil
 }
 
-func (api *ApiAdapter) RegisterUser(ctx context.Context, login, password string) (token string, err error) {
-	createdAt := time.Now()
+func (api *ApiAdapter) RegisterUser(ctx context.Context, user domain.User) (token string, err error) {
 	resp, err := api.client.RegisterUser(ctx, &pb.RegisterUserRequest{
 		User: &pb.User{
-			Id:       uuid.NewString(),
-			Login:    login,
-			Password: &password,
+			Id:       user.ID.String(),
+			Login:    user.Login,
+			Password: &user.Password,
 			CreatedAt: &timestamppb.Timestamp{
-				Seconds: createdAt.Unix(),
-				Nanos:   int32(createdAt.Nanosecond()),
+				Seconds: user.CreatedAt.Unix(),
+				Nanos:   int32(user.CreatedAt.Nanosecond()),
 			},
 		},
 	})

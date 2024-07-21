@@ -25,6 +25,7 @@ func (cli *cliAdapter) userLoginCmd() *cobra.Command {
 	c := &cobra.Command{
 		Use:   "login",
 		Short: "User authentication",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			login, _ := cmd.Flags().GetString("login")
 			password, _ := cmd.Flags().GetString("password")
@@ -47,8 +48,10 @@ func (cli *cliAdapter) userLoginCmd() *cobra.Command {
 		},
 	}
 
-	c.Flags().String("login", "", "User login")
-	c.Flags().String("password", "", "User password")
+	c.Flags().StringP("login", "l", "", "User login (required)")
+	c.Flags().StringP("password", "p", "", "User password (required)")
+	_ = c.MarkFlagRequired("login")
+	_ = c.MarkFlagRequired("password")
 
 	return c
 }
@@ -57,6 +60,7 @@ func (cli *cliAdapter) userRegisterCmd() *cobra.Command {
 	c := &cobra.Command{
 		Use:   "register",
 		Short: "User registration",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			login, _ := cmd.Flags().GetString("login")
 			password, _ := cmd.Flags().GetString("password")
@@ -79,8 +83,10 @@ func (cli *cliAdapter) userRegisterCmd() *cobra.Command {
 		},
 	}
 
-	c.Flags().String("login", "", "User login")
-	c.Flags().String("password", "", "User password")
+	c.Flags().StringP("login", "l", "", "User login (required)")
+	c.Flags().StringP("password", "p", "", "User password (required)")
+	_ = c.MarkFlagRequired("login")
+	_ = c.MarkFlagRequired("password")
 
 	return c
 }

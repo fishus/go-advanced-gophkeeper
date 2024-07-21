@@ -2,7 +2,11 @@ package service
 
 import (
 	"context"
-	
+	"time"
+
+	"github.com/google/uuid"
+
+	"github.com/fishus/go-advanced-gophkeeper/internal/core/domain"
 	"github.com/fishus/go-advanced-gophkeeper/internal/core/port"
 )
 
@@ -41,7 +45,13 @@ func (s *clientService) UserLogin(ctx context.Context, login, password string) (
 }
 
 func (s *clientService) UserRegister(ctx context.Context, login, password string) (token string, err error) {
-	token, err = s.apiAdapter.RegisterUser(ctx, login, password)
+	user := domain.User{
+		ID:        uuid.New(),
+		Login:     login,
+		Password:  password,
+		CreatedAt: time.Now(),
+	}
+	token, err = s.apiAdapter.RegisterUser(ctx, user)
 	if err == nil {
 		s.token = token
 	}
