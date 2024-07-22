@@ -48,7 +48,7 @@ type (
 func New(filename string) (*Config, error) {
 	viper.SetConfigFile(filename)
 	if err := viper.ReadInConfig(); err != nil {
-		return nil, fmt.Errorf("error loading .env file: %w", err)
+		return nil, fmt.Errorf("error loading config file: %w", err)
 	}
 
 	viper.RegisterAlias("APP_LOG_LEVEL", "app.log_level")

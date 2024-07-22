@@ -7,6 +7,7 @@ var (
 	ErrAlreadyExists   = errors.New("already exists")
 	ErrNotFound        = errors.New("not found")
 	ErrUserNotFound    = errors.New("user not found")
+	ErrUserIDNotSet    = errors.New("user id not set")
 	ErrTimeout         = errors.New("timeout exceeded")
 
 	ErrTokenDuration      = errors.New("invalid token duration format")
@@ -17,4 +18,6 @@ var (
 
 	ErrUndefinedVaultKind = errors.New("vault kind is not defined")
 	ErrInvalidVaultKind   = errors.New("incorrect vault kind")
+
+	ErrVaultRecordNotCreated = errors.New("vault record was not created")
 )

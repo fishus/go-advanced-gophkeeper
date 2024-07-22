@@ -3,7 +3,6 @@ package grpc
 import (
 	"context"
 	"errors"
-	"fmt"
 	"log/slog"
 	"strings"
 	"time"
@@ -47,7 +46,6 @@ func (s *server) AddVaultRecord(ctx context.Context, in *pb.AddVaultRecordReques
 	if err != nil {
 		return nil, err
 	}
-	fmt.Printf("pbRecord: %#v\n", pbRecord)
 
 	response.Record = pbRecord
 
@@ -62,7 +60,7 @@ func getUserIDFromContext(ctx context.Context) (userID uuid.UUID, err error) {
 			return
 		}
 	}
-	err = errors.New("user id not set")
+	err = domain.ErrUserIDNotSet
 	return
 }
 

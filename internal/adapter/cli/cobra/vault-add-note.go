@@ -1,7 +1,6 @@
 package cobra
 
 import (
-	"errors"
 	"fmt"
 
 	"github.com/spf13/cobra"
@@ -32,7 +31,7 @@ func (cli *cliAdapter) vaultAddNoteCmd() *cobra.Command {
 			if rec != nil {
 				fmt.Println("New note added successfully")
 			} else {
-				err = errors.New("the note was not added")
+				err = domain.ErrVaultRecordNotCreated
 			}
 
 			return nil
