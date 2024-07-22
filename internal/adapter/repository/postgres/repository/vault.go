@@ -44,7 +44,7 @@ func (repo *VaultRepository) CreateVaultRecord(ctx context.Context, rec domain.V
 	query := repo.db.QueryBuilder.Insert("vault").
 		Columns("id", "user_id", "kind", "data", "created_at", "updated_at").
 		Values(rec.ID, rec.UserID, rec.Kind, data, rec.CreatedAt, rec.UpdatedAt).
-		Suffix("RETURNING *")
+		Suffix("RETURNING id, user_id, kind, created_at, updated_at")
 
 	sql, args, err := query.ToSql()
 	if err != nil {
@@ -55,7 +55,6 @@ func (repo *VaultRepository) CreateVaultRecord(ctx context.Context, rec domain.V
 		&rec.ID,
 		&rec.UserID,
 		&rec.Kind,
-		nil,
 		&rec.CreatedAt,
 		&rec.UpdatedAt,
 	)
