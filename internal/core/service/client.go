@@ -114,3 +114,19 @@ func (s *clientService) VaultAddRecord(ctx context.Context, data domain.IVaultRe
 
 	return rec, nil
 }
+
+func (s *clientService) VaultListRecords(ctx context.Context, page, limit uint64) ([]domain.VaultListItem, error) {
+	ctx, err := s.apiAdapter.SetToken(ctx, s.token)
+	if err != nil {
+		return nil, err
+	}
+
+	list, err := s.apiAdapter.VaultListRecords(ctx, page, limit)
+	if err != nil {
+		return nil, err
+	}
+
+	// TODO load from local db
+
+	return list, nil
+}

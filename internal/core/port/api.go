@@ -13,4 +13,5 @@ type ApiAdapter interface {
 	RegisterUser(context.Context, domain.User) (token string, err error)
 	SetToken(ctx context.Context, token string) (context.Context, error)
 	VaultAddRecord(context.Context, domain.VaultRecord) (*domain.VaultRecord, error)
+	VaultListRecords(ctx context.Context, page, limit uint64) ([]domain.VaultListItem, error)
 }

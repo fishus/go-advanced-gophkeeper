@@ -17,4 +17,5 @@ type ClientService interface {
 	VaultAddCreds(ctx context.Context, creds domain.VaultDataCreds) (*domain.VaultRecord, error)
 	VaultAddFile(ctx context.Context, file domain.VaultDataFile) (*domain.VaultRecord, error)
 	VaultAddRecord(ctx context.Context, data domain.IVaultRecordData) (*domain.VaultRecord, error)
+	VaultListRecords(ctx context.Context, page, limit uint64) ([]domain.VaultListItem, error)
 }

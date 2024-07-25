@@ -6,6 +6,14 @@ import (
 	"github.com/google/uuid"
 )
 
+type VaultListItem struct {
+	ID        uuid.UUID
+	Kind      VaultKind
+	Info      string
+	CreatedAt time.Time
+	UpdatedAt time.Time
+}
+
 type VaultRecord struct {
 	ID        uuid.UUID
 	UserID    uuid.UUID
