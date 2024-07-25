@@ -19,6 +19,10 @@ func NewVaultService(vaultRepo port.VaultRepository) port.VaultService {
 }
 
 func (s *vaultService) AddVaultRecord(ctx context.Context, r domain.VaultRecord) (*domain.VaultRecord, error) {
+	if err := r.Data.Validate(); err != nil {
+		return nil, err
+	}
+
 	rec, err := s.vaultRepo.CreateVaultRecord(ctx, r)
 	if err != nil {
 		return nil, fmt.Errorf("vault record not created: %w", err)

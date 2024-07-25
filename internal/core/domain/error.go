@@ -16,8 +16,14 @@ var (
 	ErrInvalidToken       = errors.New("access token is invalid")
 	ErrInvalidCredentials = errors.New("incorrect login or password")
 
-	ErrUndefinedVaultKind = errors.New("vault kind is not defined")
-	ErrInvalidVaultKind   = errors.New("incorrect vault kind")
+	ErrUndefinedVaultKind   = errors.New("vault kind is not defined")
+	ErrInvalidVaultKind     = errors.New("incorrect vault kind")
+	ErrInvalidCardExpDate   = errors.New("invalid card expiration date (MM/YY)")
+	ErrVaultMaxFilesize     = errors.New("maximum file size exceeded")
+	ErrVaultNoteMaxLen      = errors.New("maximum length of note content exceeded")
+	ErrIncorrectCardNumber  = errors.New("incorrect card number")
+	ErrIncorrectCardExpDate = errors.New("incorrect card exp. date")
+	ErrIncorrectCardCvcCode = errors.New("incorrect card cvc code")
 
 	ErrVaultRecordNotCreated = errors.New("vault record was not created")
 )

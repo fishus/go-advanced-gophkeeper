@@ -59,9 +59,43 @@ func (s *clientService) UserRegister(ctx context.Context, login, password string
 }
 
 func (s *clientService) VaultAddNote(ctx context.Context, data domain.VaultDataNote) (*domain.VaultRecord, error) {
+	return s.VaultAddRecord(ctx, data)
+}
+
+func (s *clientService) VaultAddCard(ctx context.Context, data domain.VaultDataCard) (*domain.VaultRecord, error) {
+	return s.VaultAddRecord(ctx, data)
+}
+
+func (s *clientService) VaultAddCreds(ctx context.Context, data domain.VaultDataCreds) (*domain.VaultRecord, error) {
+	return s.VaultAddRecord(ctx, data)
+}
+
+func (s *clientService) VaultAddFile(ctx context.Context, data domain.VaultDataFile) (*domain.VaultRecord, error) {
+	return s.VaultAddRecord(ctx, data)
+}
+
+func (s *clientService) VaultAddRecord(ctx context.Context, data domain.IVaultRecordData) (*domain.VaultRecord, error) {
+	var kind domain.VaultKind
+	switch data.(type) {
+	case domain.VaultDataNote:
+		kind = domain.VaultKindNote
+	case domain.VaultDataCard:
+		kind = domain.VaultKindCard
+	case domain.VaultDataCreds:
+		kind = domain.VaultKindCreds
+	case domain.VaultDataFile:
+		kind = domain.VaultKindFile
+	default:
+		return nil, domain.ErrInvalidVaultKind
+	}
+
+	if err := data.Validate(); err != nil {
+		return nil, err
+	}
+
 	rec := &domain.VaultRecord{
 		ID:        uuid.New(),
-		Kind:      domain.VaultKindNote,
+		Kind:      kind,
 		Data:      data,
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),

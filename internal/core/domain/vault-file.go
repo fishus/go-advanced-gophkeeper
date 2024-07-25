@@ -5,6 +5,8 @@ import (
 	"strconv"
 )
 
+const VaultFileMaxFilesize = 1024 * 1024
+
 type VaultDataFile struct {
 	Info     string `json:"info"`
 	Filename string `json:"filename"`
@@ -59,4 +61,12 @@ func (v *VaultDataFile) UnmarshalJSON(data []byte) (err error) {
 	v.Data = []byte(aliasValue.Data)
 
 	return
+}
+
+func (v VaultDataFile) Validate() error {
+	if v.Filesize > VaultFileMaxFilesize {
+		return ErrVaultMaxFilesize
+	}
+
+	return nil
 }

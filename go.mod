@@ -5,12 +5,14 @@ go 1.22.5
 require (
 	aidanwoods.dev/go-paseto v1.5.1
 	github.com/Masterminds/squirrel v1.5.4
+	github.com/gabriel-vasile/mimetype v1.4.4
 	github.com/google/uuid v1.6.0
 	github.com/jackc/pgerrcode v0.0.0-20240316143900-6e2875d9b438
 	github.com/jackc/pgx/v5 v5.6.0
 	github.com/pressly/goose/v3 v3.21.1
 	github.com/spf13/cobra v1.8.1
 	github.com/spf13/viper v1.19.0
+	github.com/theplant/luhn v0.0.0-20170224032821-81a1a381387a
 	golang.org/x/crypto v0.23.0
 	google.golang.org/grpc v1.64.0
 	google.golang.org/protobuf v1.34.1

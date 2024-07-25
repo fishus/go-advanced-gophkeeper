@@ -22,6 +22,9 @@ func (cli *cliAdapter) vaultAddCmd() *cobra.Command {
 	}
 
 	c.AddCommand(cli.vaultAddNoteCmd())
+	c.AddCommand(cli.vaultAddCardCmd())
+	c.AddCommand(cli.vaultAddCredsCmd())
+	c.AddCommand(cli.vaultAddFileCmd())
 
 	return c
 }

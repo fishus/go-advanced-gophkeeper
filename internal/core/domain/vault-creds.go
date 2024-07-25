@@ -11,3 +11,7 @@ var _ IVaultRecordData = (*VaultDataCreds)(nil)
 func (v VaultDataCreds) GetInfo() string {
 	return v.Info
 }
+
+func (v VaultDataCreds) Validate() error {
+	return nil
+}

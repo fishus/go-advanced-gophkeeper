@@ -1,5 +1,7 @@
 package domain
 
+const VaultNoteMaxLen = 1024 * 1024
+
 type VaultDataNote struct {
 	Info    string `json:"info"`
 	Content string `json:"content"`
@@ -7,6 +9,14 @@ type VaultDataNote struct {
 
 var _ IVaultRecordData = (*VaultDataNote)(nil)
 
-func (r VaultDataNote) GetInfo() string {
-	return r.Info
+func (v VaultDataNote) GetInfo() string {
+	return v.Info
+}
+
+func (v VaultDataNote) Validate() error {
+	if len(v.Content) > VaultNoteMaxLen {
+		return ErrVaultNoteMaxLen
+	}
+
+	return nil
 }

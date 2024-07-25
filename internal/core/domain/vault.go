@@ -17,6 +17,7 @@ type VaultRecord struct {
 
 type IVaultRecordData interface {
 	GetInfo() string
+	Validate() error
 }
 
 // VaultKind Enumeration of record types in storage
