@@ -52,9 +52,27 @@ message ListVaultRecordsResponse {
   repeated ListItem list = 1;
 }
 
+message GetVaultRecordRequest {
+  string id = 1;
+}
+
+message GetVaultRecordResponse {
+  vault.Record record = 1;
+}
+
+message DownloadVaultFileRequest {
+  string id = 1;
+}
+
+message DownloadVaultFileResponse {
+  vault.File file = 1;
+}
+
 service Vault {
   rpc RegisterUser(RegisterUserRequest) returns (RegisterUserResponse);
   rpc LoginUser(LoginUserRequest) returns (LoginUserResponse);
   rpc AddVaultRecord(AddVaultRecordRequest) returns (AddVaultRecordResponse);
   rpc ListVaultRecords(ListVaultRecordsRequest) returns (ListVaultRecordsResponse);
+  rpc GetVaultRecord(GetVaultRecordRequest) returns (GetVaultRecordResponse);
+  rpc DownloadVaultFile(DownloadVaultFileRequest) returns (DownloadVaultFileResponse);
 }

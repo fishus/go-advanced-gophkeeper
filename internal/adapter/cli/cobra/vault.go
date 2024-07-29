@@ -11,6 +11,7 @@ func (cli *cliAdapter) vaultCmd() *cobra.Command {
 
 	c.AddCommand(cli.vaultAddCmd())
 	c.AddCommand(cli.vaultListCmd())
+	c.AddCommand(cli.vaultGetCmd())
 
 	return c
 }

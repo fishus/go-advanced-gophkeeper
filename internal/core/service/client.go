@@ -130,3 +130,36 @@ func (s *clientService) VaultListRecords(ctx context.Context, page, limit uint64
 
 	return list, nil
 }
+
+func (s *clientService) VaultGetRecord(ctx context.Context, recID uuid.UUID) (*domain.VaultRecord, error) {
+	ctx, err := s.apiAdapter.SetToken(ctx, s.token)
+	if err != nil {
+		return nil, err
+	}
+
+	record, err := s.apiAdapter.VaultGetRecord(ctx, recID)
+	if err != nil {
+		return nil, err
+	}
+
+	// TODO load from local db
+
+	return record, nil
+}
+
+func (s *clientService) VaultGetFile(ctx context.Context, recID uuid.UUID) (*domain.VaultDataFile, []byte, error) {
+	ctx, err := s.apiAdapter.SetToken(ctx, s.token)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	file, data, err := s.apiAdapter.VaultGetFile(ctx, recID)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	// TODO save file to local storage
+	// TODO load from local db
+
+	return file, data, nil
+}

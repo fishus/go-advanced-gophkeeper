@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	
+
 	"github.com/gabriel-vasile/mimetype"
 	"github.com/spf13/cobra"
 

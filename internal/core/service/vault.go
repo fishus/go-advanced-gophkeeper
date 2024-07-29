@@ -3,9 +3,9 @@ package service
 import (
 	"context"
 	"fmt"
-	
-	"github.com/google/uuid"
 
+	"github.com/google/uuid"
+	
 	"github.com/fishus/go-advanced-gophkeeper/internal/core/domain"
 	"github.com/fishus/go-advanced-gophkeeper/internal/core/port"
 )
@@ -40,4 +40,41 @@ func (s *vaultService) ListVaultRecords(ctx context.Context, userID uuid.UUID, p
 	}
 
 	return list, nil
+}
+
+func (s *vaultService) GetVaultRecord(ctx context.Context, recID uuid.UUID, userID uuid.UUID) (*domain.VaultRecord, error) {
+	rec, err := s.vaultRepo.GetVaultRecordByID(ctx, recID)
+	if err != nil {
+		return nil, fmt.Errorf("error getting vault record: %w", err)
+	}
+
+	if rec.UserID != userID {
+		return nil, domain.ErrNotFound
+	}
+
+	// NB! Для получение содержимого файла использовать метод GetVaultFileContent
+	if rec.Kind == domain.VaultKindFile {
+		recData, ok := rec.Data.(domain.VaultDataFile)
+		if !ok {
+			return nil, domain.ErrInvalidVaultRecordKind
+		}
+		recData.Data = []byte{}
+		rec.Data = recData
+	}
+
+	return rec, nil
+}
+
+func (s *vaultService) GetVaultFileContent(ctx context.Context, fileID uuid.UUID) ([]byte, error) {
+	rec, err := s.vaultRepo.GetVaultRecordByID(ctx, fileID)
+	if err != nil {
+		return nil, fmt.Errorf("error getting vault record: %w", err)
+	}
+
+	recData, ok := rec.Data.(domain.VaultDataFile)
+	if !ok {
+		return nil, domain.ErrInvalidVaultRecordKind
+	}
+
+	return recData.Data, nil
 }

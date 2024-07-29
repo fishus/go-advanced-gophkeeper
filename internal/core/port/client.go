@@ -3,6 +3,8 @@ package port
 import (
 	"context"
 
+	"github.com/google/uuid"
+
 	"github.com/fishus/go-advanced-gophkeeper/internal/core/domain"
 )
 
@@ -18,4 +20,6 @@ type ClientService interface {
 	VaultAddFile(ctx context.Context, file domain.VaultDataFile) (*domain.VaultRecord, error)
 	VaultAddRecord(ctx context.Context, data domain.IVaultRecordData) (*domain.VaultRecord, error)
 	VaultListRecords(ctx context.Context, page, limit uint64) ([]domain.VaultListItem, error)
+	VaultGetRecord(ctx context.Context, recID uuid.UUID) (*domain.VaultRecord, error)
+	VaultGetFile(ctx context.Context, recID uuid.UUID) (*domain.VaultDataFile, []byte, error)
 }

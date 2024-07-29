@@ -3,12 +3,14 @@ package domain
 import "errors"
 
 var (
-	ErrInvalidArgument = errors.New("invalid argument")
-	ErrAlreadyExists   = errors.New("already exists")
-	ErrNotFound        = errors.New("not found")
-	ErrUserNotFound    = errors.New("user not found")
-	ErrUserIDNotSet    = errors.New("user id not set")
-	ErrTimeout         = errors.New("timeout exceeded")
+	ErrInvalidArgument        = errors.New("invalid argument")
+	ErrAlreadyExists          = errors.New("already exists")
+	ErrNotFound               = errors.New("not found")
+	ErrUserNotFound           = errors.New("user not found")
+	ErrUserIDNotSet           = errors.New("user id not set")
+	ErrTimeout                = errors.New("timeout exceeded")
+	ErrInvalidVaultRecordKind = errors.New("invalid vault record kind")
+	ErrInvalidServerResponse  = errors.New("invalid server response")
 
 	ErrTokenDuration      = errors.New("invalid token duration format")
 	ErrTokenCreation      = errors.New("error creating token")
@@ -24,6 +26,4 @@ var (
 	ErrIncorrectCardNumber  = errors.New("incorrect card number")
 	ErrIncorrectCardExpDate = errors.New("incorrect card exp. date")
 	ErrIncorrectCardCvcCode = errors.New("incorrect card cvc code")
-
-	ErrVaultRecordNotCreated = errors.New("vault record was not created")
 )
