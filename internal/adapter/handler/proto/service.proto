@@ -1,0 +1,40 @@
+syntax = "proto3";
+
+package service;
+
+option go_package = "github.com/fishus/go-advanced-gophkeeper/internal/adapter/handler/proto";
+
+import "user.proto";
+import "vault.proto";
+
+message RegisterUserRequest {
+  user.User user = 1;
+}
+
+message RegisterUserResponse {
+  user.User user = 1;
+  string token = 2;
+}
+
+message LoginUserRequest {
+  string login = 1;
+  string password = 2;
+}
+
+message LoginUserResponse {
+  string token = 1;
+}
+
+message AddVaultRecordRequest {
+  vault.Record record = 1;
+}
+
+message AddVaultRecordResponse {
+  vault.Record record = 1;
+}
+
+service Vault {
+  rpc RegisterUser(RegisterUserRequest) returns (RegisterUserResponse);
+  rpc LoginUser(LoginUserRequest) returns (LoginUserResponse);
+  rpc AddVaultRecord(AddVaultRecordRequest) returns (AddVaultRecordResponse);
+}

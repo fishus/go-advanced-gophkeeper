@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package user;
+
+option go_package = "github.com/fishus/go-advanced-gophkeeper/internal/adapter/handler/proto";
+
+import "google/protobuf/timestamp.proto";
+
+message User {
+  string id = 1;
+  string login = 2;
+  optional string password = 3;
+  google.protobuf.Timestamp created_at = 4;
+}
