@@ -3,14 +3,18 @@ package grpc
 import (
 	"context"
 	"crypto/tls"
+	"errors"
 	"fmt"
 
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/metadata"
+	"google.golang.org/grpc/status"
 
 	"github.com/fishus/go-advanced-gophkeeper/internal/adapter/api/grpc/interceptor"
 	pb "github.com/fishus/go-advanced-gophkeeper/internal/adapter/handler/proto"
+	"github.com/fishus/go-advanced-gophkeeper/internal/core/domain"
 	"github.com/fishus/go-advanced-gophkeeper/internal/core/port"
 )
 
@@ -50,4 +54,22 @@ func (api *ApiAdapter) Close() error {
 
 func (api *ApiAdapter) SetToken(ctx context.Context, token string) (context.Context, error) {
 	return metadata.AppendToOutgoingContext(ctx, "X-Auth-Token", token), nil
+}
+
+func handleErrCodes(err error) error {
+	if e, ok := status.FromError(err); ok {
+		switch e.Code() {
+		case codes.DeadlineExceeded:
+			err = domain.ErrTimeout
+		case codes.InvalidArgument:
+			err = domain.ErrInvalidArgument
+		case codes.AlreadyExists:
+			err = domain.ErrAlreadyExists
+		case codes.NotFound:
+			err = domain.ErrNotFound
+		default:
+			err = errors.New(e.Message())
+		}
+	}
+	return err
 }

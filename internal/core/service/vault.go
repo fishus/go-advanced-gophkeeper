@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/google/uuid"
-	
+
 	"github.com/fishus/go-advanced-gophkeeper/internal/core/domain"
 	"github.com/fishus/go-advanced-gophkeeper/internal/core/port"
 )
@@ -34,12 +34,7 @@ func (s *vaultService) AddVaultRecord(ctx context.Context, r domain.VaultRecord)
 }
 
 func (s *vaultService) ListVaultRecords(ctx context.Context, userID uuid.UUID, page, limit uint64) ([]domain.VaultRecord, error) {
-	list, err := s.vaultRepo.ListVaultRecords(ctx, userID, page, limit)
-	if err != nil {
-		return nil, err
-	}
-
-	return list, nil
+	return s.vaultRepo.ListVaultRecords(ctx, userID, page, limit)
 }
 
 func (s *vaultService) GetVaultRecord(ctx context.Context, recID uuid.UUID, userID uuid.UUID) (*domain.VaultRecord, error) {

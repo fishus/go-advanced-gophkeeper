@@ -2,14 +2,11 @@ package grpc
 
 import (
 	"context"
-	"errors"
 	"strings"
 	"time"
 
 	"github.com/google/uuid"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
-
+	
 	"github.com/fishus/go-advanced-gophkeeper/internal/adapter/handler/grpc"
 	pb "github.com/fishus/go-advanced-gophkeeper/internal/adapter/handler/proto"
 	"github.com/fishus/go-advanced-gophkeeper/internal/core/domain"
@@ -25,18 +22,7 @@ func (api *ApiAdapter) VaultAddRecord(ctx context.Context, r domain.VaultRecord)
 		Record: pbRec,
 	})
 	if err != nil {
-		if e, ok := status.FromError(err); ok {
-			switch e.Code() {
-			case codes.DeadlineExceeded:
-				err = domain.ErrTimeout
-			case codes.AlreadyExists:
-				err = domain.ErrAlreadyExists
-			case codes.InvalidArgument:
-				err = domain.ErrInvalidArgument
-			default:
-				err = errors.New(e.Message())
-			}
-		}
+		err = handleErrCodes(err)
 		return nil, err
 	}
 
@@ -55,20 +41,12 @@ func (api *ApiAdapter) VaultListRecords(ctx context.Context, page, limit uint64)
 	})
 
 	if err != nil {
-		if e, ok := status.FromError(err); ok {
-			switch e.Code() {
-			case codes.DeadlineExceeded:
-				err = domain.ErrTimeout
-			case codes.InvalidArgument:
-				err = domain.ErrInvalidArgument
-			default:
-				err = errors.New(e.Message())
-			}
-		}
+		err = handleErrCodes(err)
 		return nil, err
 	}
 
-	var list []domain.VaultListItem
+	listLen := len(resp.GetList())
+	list := make([]domain.VaultListItem, 0, listLen)
 	for _, v := range resp.GetList() {
 		recordID, err := uuid.Parse(v.GetId())
 		if err != nil {
@@ -112,18 +90,7 @@ func (api *ApiAdapter) VaultGetRecord(ctx context.Context, recID uuid.UUID) (*do
 	})
 
 	if err != nil {
-		if e, ok := status.FromError(err); ok {
-			switch e.Code() {
-			case codes.DeadlineExceeded:
-				err = domain.ErrTimeout
-			case codes.InvalidArgument:
-				err = domain.ErrInvalidArgument
-			case codes.NotFound:
-				err = domain.ErrNotFound
-			default:
-				err = errors.New(e.Message())
-			}
-		}
+		err = handleErrCodes(err)
 		return nil, err
 	}
 
@@ -141,18 +108,7 @@ func (api *ApiAdapter) VaultGetFile(ctx context.Context, recID uuid.UUID) (*doma
 	})
 
 	if err != nil {
-		if e, ok := status.FromError(err); ok {
-			switch e.Code() {
-			case codes.DeadlineExceeded:
-				err = domain.ErrTimeout
-			case codes.InvalidArgument:
-				err = domain.ErrInvalidArgument
-			case codes.NotFound:
-				err = domain.ErrNotFound
-			default:
-				err = errors.New(e.Message())
-			}
-		}
+		err = handleErrCodes(err)
 		return nil, nil, err
 	}
 

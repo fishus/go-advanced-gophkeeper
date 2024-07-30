@@ -123,14 +123,9 @@ func (s *clientService) VaultListRecords(ctx context.Context, page, limit uint64
 		return nil, err
 	}
 
-	list, err := s.apiAdapter.VaultListRecords(ctx, page, limit)
-	if err != nil {
-		return nil, err
-	}
-
 	// TODO load from local db
 
-	return list, nil
+	return s.apiAdapter.VaultListRecords(ctx, page, limit)
 }
 
 func (s *clientService) VaultGetRecord(ctx context.Context, recID uuid.UUID) (*domain.VaultRecord, error) {
