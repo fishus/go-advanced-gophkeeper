@@ -80,12 +80,14 @@ func (api *ApiAdapter) VaultListRecords(ctx context.Context, page, limit uint64)
 			return nil, err
 		}
 
-		recordCreatedAt := time.Now()
+		now := time.Now()
+
+		recordCreatedAt := now
 		if v.GetCreatedAt() != nil {
 			recordCreatedAt = v.GetCreatedAt().AsTime()
 		}
 
-		recordUpdatedAt := time.Now()
+		recordUpdatedAt := now
 		if v.GetUpdatedAt() != nil {
 			recordUpdatedAt = v.GetUpdatedAt().AsTime()
 		}

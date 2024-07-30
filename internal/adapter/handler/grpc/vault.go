@@ -52,12 +52,14 @@ func ProtoVaultRecordToDomain(r *pb.Record) (*domain.VaultRecord, error) {
 		return nil, status.Errorf(codes.InvalidArgument, "Invalid vault kind")
 	}
 
-	recordCreatedAt := time.Now()
+	now := time.Now()
+
+	recordCreatedAt := now
 	if r.GetCreatedAt() != nil {
 		recordCreatedAt = r.GetCreatedAt().AsTime()
 	}
 
-	recordUpdatedAt := time.Now()
+	recordUpdatedAt := now
 	if r.GetUpdatedAt() != nil {
 		recordUpdatedAt = r.GetUpdatedAt().AsTime()
 	}

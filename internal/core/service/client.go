@@ -93,12 +93,14 @@ func (s *clientService) VaultAddRecord(ctx context.Context, data domain.IVaultRe
 		return nil, err
 	}
 
+	now := time.Now()
+
 	rec := &domain.VaultRecord{
 		ID:        uuid.New(),
 		Kind:      kind,
 		Data:      data,
-		CreatedAt: time.Now(),
-		UpdatedAt: time.Now(),
+		CreatedAt: now,
+		UpdatedAt: now,
 	}
 
 	// TODO save into local db
