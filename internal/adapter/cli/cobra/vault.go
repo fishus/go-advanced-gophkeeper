@@ -10,18 +10,8 @@ func (cli *cliAdapter) vaultCmd() *cobra.Command {
 	}
 
 	c.AddCommand(cli.vaultAddCmd())
-
-	return c
-}
-
-func (cli *cliAdapter) vaultAddCmd() *cobra.Command {
-	c := &cobra.Command{
-		Use:   "add",
-		Short: "Add a new record to the vault",
-		Args:  cobra.NoArgs,
-	}
-
-	c.AddCommand(cli.vaultAddNoteCmd())
+	c.AddCommand(cli.vaultListCmd())
+	c.AddCommand(cli.vaultGetCmd())
 
 	return c
 }

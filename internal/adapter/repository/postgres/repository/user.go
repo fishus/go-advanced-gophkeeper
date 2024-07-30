@@ -30,7 +30,7 @@ func (repo *UserRepository) CreateUser(ctx context.Context, user domain.User) (*
 	query := repo.db.QueryBuilder.Insert("users").
 		Columns("id", "login", "password", "created_at").
 		Values(user.ID, user.Login, user.Password, user.CreatedAt).
-		Suffix("RETURNING *")
+		Suffix("RETURNING id, login, password, created_at")
 
 	sql, args, err := query.ToSql()
 	if err != nil {

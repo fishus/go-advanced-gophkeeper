@@ -4,6 +4,8 @@ package service;
 
 option go_package = "github.com/fishus/go-advanced-gophkeeper/internal/adapter/handler/proto";
 
+import "google/protobuf/timestamp.proto";
+
 import "user.proto";
 import "vault.proto";
 
@@ -33,8 +35,44 @@ message AddVaultRecordResponse {
   vault.Record record = 1;
 }
 
+message ListVaultRecordsRequest {
+  uint64 page = 1;
+  uint64 limit = 2;
+}
+
+message ListVaultRecordsResponse {
+  message ListItem {
+    string id = 1;
+    vault.VaultKind kind = 3;
+    string info = 8;
+    google.protobuf.Timestamp created_at = 9;
+    google.protobuf.Timestamp updated_at = 10;
+
+  }
+  repeated ListItem list = 1;
+}
+
+message GetVaultRecordRequest {
+  string id = 1;
+}
+
+message GetVaultRecordResponse {
+  vault.Record record = 1;
+}
+
+message DownloadVaultFileRequest {
+  string id = 1;
+}
+
+message DownloadVaultFileResponse {
+  vault.File file = 1;
+}
+
 service Vault {
   rpc RegisterUser(RegisterUserRequest) returns (RegisterUserResponse);
   rpc LoginUser(LoginUserRequest) returns (LoginUserResponse);
   rpc AddVaultRecord(AddVaultRecordRequest) returns (AddVaultRecordResponse);
+  rpc ListVaultRecords(ListVaultRecordsRequest) returns (ListVaultRecordsResponse);
+  rpc GetVaultRecord(GetVaultRecordRequest) returns (GetVaultRecordResponse);
+  rpc DownloadVaultFile(DownloadVaultFileRequest) returns (DownloadVaultFileResponse);
 }

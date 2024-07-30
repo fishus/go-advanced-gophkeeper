@@ -1,7 +1,6 @@
 package cobra
 
 import (
-	"errors"
 	"fmt"
 
 	"github.com/spf13/cobra"
@@ -23,17 +22,13 @@ func (cli *cliAdapter) vaultAddNoteCmd() *cobra.Command {
 				Info:    info,
 			}
 
-			rec, err := cli.clientService.VaultAddNote(cmd.Context(), data)
+			_, err := cli.clientService.VaultAddNote(cmd.Context(), data)
 			if err != nil {
 				fmt.Println(err)
 				return nil
 			}
 
-			if rec != nil {
-				fmt.Println("New note added successfully")
-			} else {
-				err = errors.New("the note was not added")
-			}
+			fmt.Println("New note added successfully")
 
 			return nil
 		},

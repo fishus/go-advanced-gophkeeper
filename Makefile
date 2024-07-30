@@ -28,7 +28,9 @@ build_server: protoc cert
 
 build_client: protoc
 	pushd ./cmd/client
-	go build -o ../../bin/gophkeeper -ldflags='-X main.buildDate=$(buildDate) -X main.buildVersion=$(buildVersion) -X main.secretKey=$('secretKey')'
+	GOOS=darwin GOARCH=arm64 go build -o ../../bin/gophkeeper-osx-arm64 -ldflags='-X main.buildDate=$(buildDate) -X main.buildVersion=$(buildVersion) -X main.secretKey=$('secretKey')'
+	GOOS=linux GOARCH=amd64 go build -o ../../bin/gophkeeper-linux-amd64 -ldflags='-X main.buildDate=$(buildDate) -X main.buildVersion=$(buildVersion) -X main.secretKey=$('secretKey')'
+	GOOS=windows GOARCH=amd64 go build -o ../../bin/gophkeeper-windows-amd64.exe -ldflags='-X main.buildDate=$(buildDate) -X main.buildVersion=$(buildVersion) -X main.secretKey=$('secretKey')'
 	popd
 
 run_server: build_server

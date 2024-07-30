@@ -19,9 +19,12 @@ import (
 const _ = grpc.SupportPackageIsVersion8
 
 const (
-	Vault_RegisterUser_FullMethodName   = "/service.Vault/RegisterUser"
-	Vault_LoginUser_FullMethodName      = "/service.Vault/LoginUser"
-	Vault_AddVaultRecord_FullMethodName = "/service.Vault/AddVaultRecord"
+	Vault_RegisterUser_FullMethodName      = "/service.Vault/RegisterUser"
+	Vault_LoginUser_FullMethodName         = "/service.Vault/LoginUser"
+	Vault_AddVaultRecord_FullMethodName    = "/service.Vault/AddVaultRecord"
+	Vault_ListVaultRecords_FullMethodName  = "/service.Vault/ListVaultRecords"
+	Vault_GetVaultRecord_FullMethodName    = "/service.Vault/GetVaultRecord"
+	Vault_DownloadVaultFile_FullMethodName = "/service.Vault/DownloadVaultFile"
 )
 
 // VaultClient is the client API for Vault service.
@@ -31,6 +34,9 @@ type VaultClient interface {
 	RegisterUser(ctx context.Context, in *RegisterUserRequest, opts ...grpc.CallOption) (*RegisterUserResponse, error)
 	LoginUser(ctx context.Context, in *LoginUserRequest, opts ...grpc.CallOption) (*LoginUserResponse, error)
 	AddVaultRecord(ctx context.Context, in *AddVaultRecordRequest, opts ...grpc.CallOption) (*AddVaultRecordResponse, error)
+	ListVaultRecords(ctx context.Context, in *ListVaultRecordsRequest, opts ...grpc.CallOption) (*ListVaultRecordsResponse, error)
+	GetVaultRecord(ctx context.Context, in *GetVaultRecordRequest, opts ...grpc.CallOption) (*GetVaultRecordResponse, error)
+	DownloadVaultFile(ctx context.Context, in *DownloadVaultFileRequest, opts ...grpc.CallOption) (*DownloadVaultFileResponse, error)
 }
 
 type vaultClient struct {
@@ -71,6 +77,36 @@ func (c *vaultClient) AddVaultRecord(ctx context.Context, in *AddVaultRecordRequ
 	return out, nil
 }
 
+func (c *vaultClient) ListVaultRecords(ctx context.Context, in *ListVaultRecordsRequest, opts ...grpc.CallOption) (*ListVaultRecordsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListVaultRecordsResponse)
+	err := c.cc.Invoke(ctx, Vault_ListVaultRecords_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *vaultClient) GetVaultRecord(ctx context.Context, in *GetVaultRecordRequest, opts ...grpc.CallOption) (*GetVaultRecordResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetVaultRecordResponse)
+	err := c.cc.Invoke(ctx, Vault_GetVaultRecord_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *vaultClient) DownloadVaultFile(ctx context.Context, in *DownloadVaultFileRequest, opts ...grpc.CallOption) (*DownloadVaultFileResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DownloadVaultFileResponse)
+	err := c.cc.Invoke(ctx, Vault_DownloadVaultFile_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // VaultServer is the server API for Vault service.
 // All implementations must embed UnimplementedVaultServer
 // for forward compatibility
@@ -78,6 +114,9 @@ type VaultServer interface {
 	RegisterUser(context.Context, *RegisterUserRequest) (*RegisterUserResponse, error)
 	LoginUser(context.Context, *LoginUserRequest) (*LoginUserResponse, error)
 	AddVaultRecord(context.Context, *AddVaultRecordRequest) (*AddVaultRecordResponse, error)
+	ListVaultRecords(context.Context, *ListVaultRecordsRequest) (*ListVaultRecordsResponse, error)
+	GetVaultRecord(context.Context, *GetVaultRecordRequest) (*GetVaultRecordResponse, error)
+	DownloadVaultFile(context.Context, *DownloadVaultFileRequest) (*DownloadVaultFileResponse, error)
 	mustEmbedUnimplementedVaultServer()
 }
 
@@ -93,6 +132,15 @@ func (UnimplementedVaultServer) LoginUser(context.Context, *LoginUserRequest) (*
 }
 func (UnimplementedVaultServer) AddVaultRecord(context.Context, *AddVaultRecordRequest) (*AddVaultRecordResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddVaultRecord not implemented")
+}
+func (UnimplementedVaultServer) ListVaultRecords(context.Context, *ListVaultRecordsRequest) (*ListVaultRecordsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListVaultRecords not implemented")
+}
+func (UnimplementedVaultServer) GetVaultRecord(context.Context, *GetVaultRecordRequest) (*GetVaultRecordResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetVaultRecord not implemented")
+}
+func (UnimplementedVaultServer) DownloadVaultFile(context.Context, *DownloadVaultFileRequest) (*DownloadVaultFileResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DownloadVaultFile not implemented")
 }
 func (UnimplementedVaultServer) mustEmbedUnimplementedVaultServer() {}
 
@@ -161,6 +209,60 @@ func _Vault_AddVaultRecord_Handler(srv interface{}, ctx context.Context, dec fun
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Vault_ListVaultRecords_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListVaultRecordsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(VaultServer).ListVaultRecords(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Vault_ListVaultRecords_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(VaultServer).ListVaultRecords(ctx, req.(*ListVaultRecordsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Vault_GetVaultRecord_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetVaultRecordRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(VaultServer).GetVaultRecord(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Vault_GetVaultRecord_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(VaultServer).GetVaultRecord(ctx, req.(*GetVaultRecordRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Vault_DownloadVaultFile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DownloadVaultFileRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(VaultServer).DownloadVaultFile(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Vault_DownloadVaultFile_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(VaultServer).DownloadVaultFile(ctx, req.(*DownloadVaultFileRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Vault_ServiceDesc is the grpc.ServiceDesc for Vault service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -179,6 +281,18 @@ var Vault_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "AddVaultRecord",
 			Handler:    _Vault_AddVaultRecord_Handler,
+		},
+		{
+			MethodName: "ListVaultRecords",
+			Handler:    _Vault_ListVaultRecords_Handler,
+		},
+		{
+			MethodName: "GetVaultRecord",
+			Handler:    _Vault_GetVaultRecord_Handler,
+		},
+		{
+			MethodName: "DownloadVaultFile",
+			Handler:    _Vault_DownloadVaultFile_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -6,6 +6,14 @@ import (
 	"github.com/google/uuid"
 )
 
+type VaultListItem struct {
+	ID        uuid.UUID
+	Kind      VaultKind
+	Info      string
+	CreatedAt time.Time
+	UpdatedAt time.Time
+}
+
 type VaultRecord struct {
 	ID        uuid.UUID
 	UserID    uuid.UUID
@@ -17,6 +25,7 @@ type VaultRecord struct {
 
 type IVaultRecordData interface {
 	GetInfo() string
+	Validate() error
 }
 
 // VaultKind Enumeration of record types in storage
@@ -46,20 +55,3 @@ func (k VaultKind) Validate() error {
 func (k VaultKind) String() string {
 	return string(k)
 }
-
-/*
-	x := make([]domain.IRecord, 0, 2)
-	x = append(x, recA)
-	x = append(x, recB)
-
-	for _, val := range x {
-
-		if xa, ok := val.(domain.IRecordA); ok {
-			fmt.Printf("xa: %#v\n", xa.GetA())
-		}
-
-		if xb, ok := val.(domain.IRecordB); ok {
-			fmt.Printf("xb: %#v\n", xb.GetB())
-		}
-	}
-*/

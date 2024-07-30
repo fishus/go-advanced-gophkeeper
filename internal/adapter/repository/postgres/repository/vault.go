@@ -3,9 +3,12 @@ package repository
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
-
+	sq "github.com/Masterminds/squirrel"
+	"github.com/google/uuid"
 	"github.com/jackc/pgerrcode"
+	"github.com/jackc/pgx/v5"
 
 	"github.com/fishus/go-advanced-gophkeeper/internal/adapter/repository/postgres"
 	"github.com/fishus/go-advanced-gophkeeper/internal/core/domain"
@@ -29,8 +32,6 @@ func NewVaultRepository(db *postgres.DB, cryptAdapter port.CryptAdapter) *VaultR
 
 // CreateVaultRecord creates a new vault record in the database
 func (repo *VaultRepository) CreateVaultRecord(ctx context.Context, rec domain.VaultRecord) (*domain.VaultRecord, error) {
-	// FIXME
-
 	src, err := json.Marshal(rec.Data)
 	if err != nil {
 		return nil, fmt.Errorf("marshal vault data error: %w", err)
@@ -44,7 +45,7 @@ func (repo *VaultRepository) CreateVaultRecord(ctx context.Context, rec domain.V
 	query := repo.db.QueryBuilder.Insert("vault").
 		Columns("id", "user_id", "kind", "data", "created_at", "updated_at").
 		Values(rec.ID, rec.UserID, rec.Kind, data, rec.CreatedAt, rec.UpdatedAt).
-		Suffix("RETURNING *")
+		Suffix("RETURNING id, user_id, kind, created_at, updated_at")
 
 	sql, args, err := query.ToSql()
 	if err != nil {
@@ -55,7 +56,6 @@ func (repo *VaultRepository) CreateVaultRecord(ctx context.Context, rec domain.V
 		&rec.ID,
 		&rec.UserID,
 		&rec.Kind,
-		nil,
 		&rec.CreatedAt,
 		&rec.UpdatedAt,
 	)
@@ -67,34 +67,123 @@ func (repo *VaultRepository) CreateVaultRecord(ctx context.Context, rec domain.V
 	}
 
 	return &rec, nil
-
-	//aaa, err := repo.cryptAdapter.DecryptSymmetric(ctx, dst)
-
-	//var uRecData domain.VaultDataCard
-	//if err = json.Unmarshal(out, &uRecData); err != nil {
-	//	return nil, err
-	//}
-	//fmt.Printf("Unmarshal: %#v\n", uRecData)
 }
 
-//func (repo *VaultRepository) marshalRecordData(ctx context.Context, rec domain.IVaultRecord) (string, error) {
-//	switch rec.GetKind() {
-//	case domain.VaultKindCreds:
-//
-//	default:
-//		return "", fmt.Errorf("unknown vault kind")
-//	}
-//	return "test", nil
-//}
+func (repo *VaultRepository) ListVaultRecords(ctx context.Context, userID uuid.UUID, page, limit uint64) ([]domain.VaultRecord, error) {
+	query := repo.db.QueryBuilder.Select("id, kind, data, created_at, updated_at").
+		From("vault").
+		Where(sq.Eq{"user_id": userID}).
+		OrderBy("created_at DESC").
+		Limit(limit).
+		Offset((page - 1) * limit)
 
-//func (repo *VaultRepository) unmarshalRecordData(ctx context.Context, data string) (rec domain.IVaultRecord, error) {
-//	fmt.Printf("secret key: %v\n", repo.secretKey)
-//	//s := sha256.Sum256(src)
-//	return "test", nil
-//}
+	sql, args, err := query.ToSql()
+	if err != nil {
+		return nil, err
+	}
 
-//func (repo *VaultRepository) encodeVaultRecord(ctx context.Context, rec domain.IVaultRecord) (string, error) {
-//	fmt.Printf("secret key: %v\n", repo.secretKey)
-//	//s := sha256.Sum256(src)
-//	return "test", nil
-//}
+	rows, err := repo.db.Query(ctx, sql, args...)
+	if err != nil {
+		return nil, err
+	}
+
+	var encodedData []byte
+	var record domain.VaultRecord
+	var records []domain.VaultRecord
+
+	for rows.Next() {
+		err = rows.Scan(
+			&record.ID,
+			&record.Kind,
+			&encodedData,
+			&record.CreatedAt,
+			&record.UpdatedAt,
+		)
+		if err != nil {
+			return nil, err
+		}
+
+		data, err := repo.decodeData(ctx, record.Kind, encodedData)
+		if err != nil {
+			return nil, err
+		}
+		record.Data = data
+
+		records = append(records, record)
+	}
+
+	return records, nil
+}
+
+func (repo *VaultRepository) GetVaultRecordByID(ctx context.Context, recID uuid.UUID) (*domain.VaultRecord, error) {
+
+	query := repo.db.QueryBuilder.Select("id", "user_id", "kind", "data", "created_at", "updated_at").
+		From("vault").
+		Where(sq.Eq{"id": recID}).
+		Limit(1)
+
+	sql, args, err := query.ToSql()
+	if err != nil {
+		return nil, err
+	}
+
+	var encodedData []byte
+	var record domain.VaultRecord
+	err = repo.db.QueryRow(ctx, sql, args...).Scan(
+		&record.ID,
+		&record.UserID,
+		&record.Kind,
+		&encodedData,
+		&record.CreatedAt,
+		&record.UpdatedAt,
+	)
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return nil, domain.ErrNotFound
+		}
+		return nil, err
+	}
+
+	data, err := repo.decodeData(ctx, record.Kind, encodedData)
+	if err != nil {
+		return nil, err
+	}
+	record.Data = data
+
+	return &record, nil
+}
+
+func (repo *VaultRepository) decodeData(ctx context.Context, kind domain.VaultKind, encodedData []byte) (data domain.IVaultRecordData, err error) {
+	jsonData, err := repo.cryptAdapter.DecryptSymmetric(ctx, encodedData)
+
+	switch kind {
+	case domain.VaultKindNote:
+		var recData domain.VaultDataNote
+		if err = json.Unmarshal(jsonData, &recData); err != nil {
+			return nil, err
+		}
+		data = recData
+	case domain.VaultKindCard:
+		var recData domain.VaultDataCard
+		if err = json.Unmarshal(jsonData, &recData); err != nil {
+			return nil, err
+		}
+		data = recData
+	case domain.VaultKindCreds:
+		var recData domain.VaultDataCreds
+		if err = json.Unmarshal(jsonData, &recData); err != nil {
+			return nil, err
+		}
+		data = recData
+	case domain.VaultKindFile:
+		var recData domain.VaultDataFile
+		if err = json.Unmarshal(jsonData, &recData); err != nil {
+			return nil, err
+		}
+		data = recData
+	default:
+		return nil, domain.ErrInvalidVaultKind
+	}
+
+	return data, nil
+}

@@ -59,9 +59,43 @@ func (s *clientService) UserRegister(ctx context.Context, login, password string
 }
 
 func (s *clientService) VaultAddNote(ctx context.Context, data domain.VaultDataNote) (*domain.VaultRecord, error) {
+	return s.VaultAddRecord(ctx, data)
+}
+
+func (s *clientService) VaultAddCard(ctx context.Context, data domain.VaultDataCard) (*domain.VaultRecord, error) {
+	return s.VaultAddRecord(ctx, data)
+}
+
+func (s *clientService) VaultAddCreds(ctx context.Context, data domain.VaultDataCreds) (*domain.VaultRecord, error) {
+	return s.VaultAddRecord(ctx, data)
+}
+
+func (s *clientService) VaultAddFile(ctx context.Context, data domain.VaultDataFile) (*domain.VaultRecord, error) {
+	return s.VaultAddRecord(ctx, data)
+}
+
+func (s *clientService) VaultAddRecord(ctx context.Context, data domain.IVaultRecordData) (*domain.VaultRecord, error) {
+	var kind domain.VaultKind
+	switch data.(type) {
+	case domain.VaultDataNote:
+		kind = domain.VaultKindNote
+	case domain.VaultDataCard:
+		kind = domain.VaultKindCard
+	case domain.VaultDataCreds:
+		kind = domain.VaultKindCreds
+	case domain.VaultDataFile:
+		kind = domain.VaultKindFile
+	default:
+		return nil, domain.ErrInvalidVaultKind
+	}
+
+	if err := data.Validate(); err != nil {
+		return nil, err
+	}
+
 	rec := &domain.VaultRecord{
 		ID:        uuid.New(),
-		Kind:      domain.VaultKindNote,
+		Kind:      kind,
 		Data:      data,
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
@@ -79,4 +113,53 @@ func (s *clientService) VaultAddNote(ctx context.Context, data domain.VaultDataN
 	}
 
 	return rec, nil
+}
+
+func (s *clientService) VaultListRecords(ctx context.Context, page, limit uint64) ([]domain.VaultListItem, error) {
+	ctx, err := s.apiAdapter.SetToken(ctx, s.token)
+	if err != nil {
+		return nil, err
+	}
+
+	list, err := s.apiAdapter.VaultListRecords(ctx, page, limit)
+	if err != nil {
+		return nil, err
+	}
+
+	// TODO load from local db
+
+	return list, nil
+}
+
+func (s *clientService) VaultGetRecord(ctx context.Context, recID uuid.UUID) (*domain.VaultRecord, error) {
+	ctx, err := s.apiAdapter.SetToken(ctx, s.token)
+	if err != nil {
+		return nil, err
+	}
+
+	record, err := s.apiAdapter.VaultGetRecord(ctx, recID)
+	if err != nil {
+		return nil, err
+	}
+
+	// TODO load from local db
+
+	return record, nil
+}
+
+func (s *clientService) VaultGetFile(ctx context.Context, recID uuid.UUID) (*domain.VaultDataFile, []byte, error) {
+	ctx, err := s.apiAdapter.SetToken(ctx, s.token)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	file, data, err := s.apiAdapter.VaultGetFile(ctx, recID)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	// TODO save file to local storage
+	// TODO load from local db
+
+	return file, data, nil
 }

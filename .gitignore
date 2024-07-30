@@ -4,6 +4,7 @@
 *.dll
 *.so
 *.dylib
+!/bin/**.exe
 
 # Test binary, built with `go test -c`
 *.test
@@ -12,17 +13,16 @@
 *.out
 
 # Dependency directories (remove the comment below to include it)
-vendor/
+/vendor/
 
 # IDEs directories
 .idea
 .vscode
 
-# Env
-.env
-.server.env
+# TLS certificate
+/cert/
 
-# sencetive data
-cert/
-client-config.yaml
+# Env vars and configs
+/client-config.yaml
+.env
 .server.env
