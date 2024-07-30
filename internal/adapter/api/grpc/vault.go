@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	
+
 	"github.com/fishus/go-advanced-gophkeeper/internal/adapter/handler/grpc"
 	pb "github.com/fishus/go-advanced-gophkeeper/internal/adapter/handler/proto"
 	"github.com/fishus/go-advanced-gophkeeper/internal/core/domain"

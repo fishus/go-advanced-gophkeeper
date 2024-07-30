@@ -64,7 +64,7 @@ func (cli *cliAdapter) vaultAddCardCmd() *cobra.Command {
 	c.Flags().String("exp", "", "Card exp. date (MM/YY)")
 	c.Flags().String("cvc", "", "Card CVC code")
 	c.Flags().StringP("info", "i", "", "Card metadata")
-	_ = c.MarkFlagRequired("number")
+	c.MarkFlagRequired("number")
 
 	return c
 }

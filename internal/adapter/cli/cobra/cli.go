@@ -30,7 +30,7 @@ func (cli *cliAdapter) Execute(ctx context.Context, buildDate, buildVersion stri
 	})
 
 	cobra.OnFinalize(func() {
-		_ = cli.clientService.Teardown(ctx)
+		cli.clientService.Teardown(ctx)
 	})
 
 	err := cli.rootCmd(buildDate, buildVersion).ExecuteContext(ctx)
