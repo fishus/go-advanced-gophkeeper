@@ -49,6 +49,7 @@ func ProtoVaultRecordToDomain(r *pb.Record) (*domain.VaultRecord, error) {
 
 	recordKind := domain.VaultKind(strings.ToLower(r.GetKind().String()))
 	if err := recordKind.Validate(); err != nil {
+		slog.Info(err.Error(), "kind", recordKind.String())
 		return nil, status.Errorf(codes.InvalidArgument, "Invalid vault kind")
 	}
 
@@ -118,6 +119,7 @@ func ProtoVaultRecordToDomain(r *pb.Record) (*domain.VaultRecord, error) {
 			Data:     r.GetFile().GetData(),
 		}
 	default:
+		slog.Info("Undefined vault kind", "kind", r.GetKind().String())
 		return nil, status.Errorf(codes.InvalidArgument, "Undefined vault kind")
 	}
 
