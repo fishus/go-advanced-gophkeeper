@@ -30,6 +30,7 @@ func (s *server) AddVaultRecord(ctx context.Context, in *pb.AddVaultRecordReques
 	rec, err = s.vaultService.AddVaultRecord(ctx, *rec)
 	if err != nil {
 		if errors.Is(err, domain.ErrAlreadyExists) {
+			slog.Info(err.Error(), "id", rec.ID)
 			return nil, status.Error(codes.AlreadyExists, "Vault record already exists")
 		} else {
 			slog.Error(err.Error())

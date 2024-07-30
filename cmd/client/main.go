@@ -45,5 +45,5 @@ func main() {
 	clientService := service.NewClientService(apiAdapter)
 
 	cli := cobra.New(clientService)
-	_ = cli.Execute(context.Background(), buildDate, buildVersion)
+	cli.Execute(context.Background(), buildDate, buildVersion)
 }

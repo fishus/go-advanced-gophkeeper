@@ -45,19 +45,35 @@ func (s *server) ListVaultRecords(ctx context.Context, in *pb.ListVaultRecordsRe
 		switch rec.Kind {
 		case domain.VaultKindCreds:
 			pbItem.Kind = pb.VaultKind_CREDS
-			data := rec.Data.(domain.VaultDataCreds)
+			data, ok := rec.Data.(domain.VaultDataCreds)
+			if !ok {
+				slog.Error(domain.ErrInvalidVaultRecordKind.Error())
+				return nil, status.Error(codes.Internal, domain.ErrInvalidVaultRecordKind.Error())
+			}
 			pbItem.Info = data.Info
 		case domain.VaultKindCard:
 			pbItem.Kind = pb.VaultKind_CARD
-			data := rec.Data.(domain.VaultDataCard)
+			data, ok := rec.Data.(domain.VaultDataCard)
+			if !ok {
+				slog.Error(domain.ErrInvalidVaultRecordKind.Error())
+				return nil, status.Error(codes.Internal, domain.ErrInvalidVaultRecordKind.Error())
+			}
 			pbItem.Info = data.Info
 		case domain.VaultKindNote:
 			pbItem.Kind = pb.VaultKind_NOTE
-			data := rec.Data.(domain.VaultDataNote)
+			data, ok := rec.Data.(domain.VaultDataNote)
+			if !ok {
+				slog.Error(domain.ErrInvalidVaultRecordKind.Error())
+				return nil, status.Error(codes.Internal, domain.ErrInvalidVaultRecordKind.Error())
+			}
 			pbItem.Info = data.Info
 		case domain.VaultKindFile:
 			pbItem.Kind = pb.VaultKind_FILE
-			data := rec.Data.(domain.VaultDataFile)
+			data, ok := rec.Data.(domain.VaultDataFile)
+			if !ok {
+				slog.Error(domain.ErrInvalidVaultRecordKind.Error())
+				return nil, status.Error(codes.Internal, domain.ErrInvalidVaultRecordKind.Error())
+			}
 			pbItem.Info = data.Info
 		default:
 			slog.Error(err.Error())

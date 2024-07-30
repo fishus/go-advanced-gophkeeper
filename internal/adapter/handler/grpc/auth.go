@@ -26,6 +26,7 @@ func (s *server) LoginUser(ctx context.Context, in *pb.LoginUserRequest) (*pb.Lo
 	token, err := s.authService.LoginUser(ctx, in.Login, in.Password)
 	if err != nil {
 		if errors.Is(err, domain.ErrInvalidCredentials) {
+			slog.Info(err.Error(), "login", in.Login)
 			return nil, status.Error(codes.Unauthenticated, "Incorrect login or password")
 		} else {
 			slog.Error(err.Error())

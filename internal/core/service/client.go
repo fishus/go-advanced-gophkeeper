@@ -93,12 +93,14 @@ func (s *clientService) VaultAddRecord(ctx context.Context, data domain.IVaultRe
 		return nil, err
 	}
 
+	now := time.Now()
+
 	rec := &domain.VaultRecord{
 		ID:        uuid.New(),
 		Kind:      kind,
 		Data:      data,
-		CreatedAt: time.Now(),
-		UpdatedAt: time.Now(),
+		CreatedAt: now,
+		UpdatedAt: now,
 	}
 
 	// TODO save into local db
@@ -121,14 +123,9 @@ func (s *clientService) VaultListRecords(ctx context.Context, page, limit uint64
 		return nil, err
 	}
 
-	list, err := s.apiAdapter.VaultListRecords(ctx, page, limit)
-	if err != nil {
-		return nil, err
-	}
-
 	// TODO load from local db
 
-	return list, nil
+	return s.apiAdapter.VaultListRecords(ctx, page, limit)
 }
 
 func (s *clientService) VaultGetRecord(ctx context.Context, recID uuid.UUID) (*domain.VaultRecord, error) {

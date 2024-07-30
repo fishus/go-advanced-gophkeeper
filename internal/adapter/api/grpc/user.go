@@ -48,18 +48,7 @@ func (api *ApiAdapter) RegisterUser(ctx context.Context, user domain.User) (toke
 		},
 	})
 	if err != nil {
-		if e, ok := status.FromError(err); ok {
-			switch e.Code() {
-			case codes.DeadlineExceeded:
-				err = domain.ErrTimeout
-			case codes.AlreadyExists:
-				err = domain.ErrAlreadyExists
-			case codes.InvalidArgument:
-				err = domain.ErrInvalidArgument
-			default:
-				err = errors.New(e.Message())
-			}
-		}
+		err = handleErrCodes(err)
 		return
 	}
 	return resp.Token, nil

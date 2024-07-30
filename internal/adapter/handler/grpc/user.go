@@ -37,6 +37,7 @@ func (s *server) RegisterUser(ctx context.Context, in *pb.RegisterUserRequest) (
 	user, err := s.userService.RegisterUser(ctx, usr)
 	if err != nil {
 		if errors.Is(err, domain.ErrAlreadyExists) {
+			slog.Info(err.Error(), "login", in.User.Login)
 			return nil, status.Error(codes.AlreadyExists, "This login is already taken")
 		} else {
 			slog.Error(err.Error())

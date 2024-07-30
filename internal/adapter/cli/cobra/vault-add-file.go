@@ -54,7 +54,7 @@ func (cli *cliAdapter) vaultAddFileCmd() *cobra.Command {
 
 	c.Flags().StringP("file", "f", "", "Path to the file")
 	c.Flags().StringP("info", "i", "", "File metadata")
-	_ = c.MarkFlagRequired("file")
+	c.MarkFlagRequired("file")
 
 	return c
 }

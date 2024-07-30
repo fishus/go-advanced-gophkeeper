@@ -31,6 +31,7 @@ func (s *server) GetVaultRecord(ctx context.Context, in *pb.GetVaultRecordReques
 	rec, err := s.vaultService.GetVaultRecord(ctx, recordID, userID)
 	if err != nil {
 		if errors.Is(err, domain.ErrNotFound) {
+			slog.Info(err.Error(), "id", recordID)
 			return nil, status.Error(codes.NotFound, "Vault record not found")
 		} else {
 			slog.Error(err.Error())
@@ -66,6 +67,7 @@ func (s *server) DownloadVaultFile(ctx context.Context, in *pb.DownloadVaultFile
 	rec, err := s.vaultService.GetVaultRecord(ctx, recordID, userID)
 	if err != nil {
 		if errors.Is(err, domain.ErrNotFound) {
+			slog.Info(err.Error(), "id", recordID)
 			return nil, status.Error(codes.NotFound, "Vault record not found")
 		} else {
 			slog.Error(err.Error())
@@ -75,12 +77,14 @@ func (s *server) DownloadVaultFile(ctx context.Context, in *pb.DownloadVaultFile
 
 	recData, ok := rec.Data.(domain.VaultDataFile)
 	if !ok {
-		return nil, domain.ErrInvalidVaultRecordKind
+		slog.Error(domain.ErrInvalidVaultRecordKind.Error())
+		return nil, status.Error(codes.Internal, domain.ErrInvalidVaultRecordKind.Error())
 	}
 
 	fileContent, err := s.vaultService.GetVaultFileContent(ctx, recordID)
 	if err != nil {
 		if errors.Is(err, domain.ErrNotFound) {
+			slog.Info(err.Error(), "id", recordID)
 			return nil, status.Error(codes.NotFound, "File not found")
 		} else {
 			slog.Error(err.Error())

@@ -36,7 +36,7 @@ func (cli *cliAdapter) vaultAddNoteCmd() *cobra.Command {
 
 	c.Flags().StringP("content", "c", "", "Note content")
 	c.Flags().StringP("info", "i", "", "Note metadata")
-	_ = c.MarkFlagRequired("content")
+	c.MarkFlagRequired("content")
 
 	return c
 }
