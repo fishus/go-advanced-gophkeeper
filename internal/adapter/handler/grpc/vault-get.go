@@ -75,7 +75,8 @@ func (s *server) DownloadVaultFile(ctx context.Context, in *pb.DownloadVaultFile
 
 	recData, ok := rec.Data.(domain.VaultDataFile)
 	if !ok {
-		return nil, domain.ErrInvalidVaultRecordKind
+		slog.Error(domain.ErrInvalidVaultRecordKind.Error())
+		return nil, status.Error(codes.Internal, domain.ErrInvalidVaultRecordKind.Error())
 	}
 
 	fileContent, err := s.vaultService.GetVaultFileContent(ctx, recordID)

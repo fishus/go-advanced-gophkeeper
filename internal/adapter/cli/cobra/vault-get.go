@@ -49,23 +49,35 @@ func (cli *cliAdapter) vaultGetRecordCmd() *cobra.Command {
 
 			switch record.Kind {
 			case domain.VaultKindNote:
-				data := record.Data.(domain.VaultDataNote)
+				data, ok := record.Data.(domain.VaultDataNote)
+				if !ok {
+					return domain.ErrInvalidVaultRecordKind
+				}
 				props["Info"] = data.Info
 				props["Content"] = data.Content
 			case domain.VaultKindCard:
-				data := record.Data.(domain.VaultDataCard)
+				data, ok := record.Data.(domain.VaultDataCard)
+				if !ok {
+					return domain.ErrInvalidVaultRecordKind
+				}
 				props["Info"] = data.Info
 				props["Number"] = data.Number
 				props["Holder Name"] = data.HolderName
 				props["Exp. date"] = fmt.Sprintf("%02d/%02d", data.ExpDate.Month, data.ExpDate.Year)
 				props["CVC code"] = data.CvcCode
 			case domain.VaultKindCreds:
-				data := record.Data.(domain.VaultDataCreds)
+				data, ok := record.Data.(domain.VaultDataCreds)
+				if !ok {
+					return domain.ErrInvalidVaultRecordKind
+				}
 				props["Info"] = data.Info
 				props["Login"] = data.Login
 				props["Password"] = data.Password
 			case domain.VaultKindFile:
-				data := record.Data.(domain.VaultDataFile)
+				data, ok := record.Data.(domain.VaultDataFile)
+				if !ok {
+					return domain.ErrInvalidVaultRecordKind
+				}
 				props["Info"] = data.Info
 				props["Filename"] = data.Filename
 				props["MimeType"] = data.MimeType

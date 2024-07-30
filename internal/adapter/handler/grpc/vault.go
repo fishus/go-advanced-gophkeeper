@@ -152,7 +152,11 @@ func DomainVaultRecordToProto(rec domain.VaultRecord) (*pb.Record, error) {
 	switch rec.Kind {
 	case domain.VaultKindCreds:
 		pbRecord.Kind = pb.VaultKind_CREDS
-		data := rec.Data.(domain.VaultDataCreds)
+		data, ok := rec.Data.(domain.VaultDataCreds)
+		if !ok {
+			slog.Error(domain.ErrInvalidVaultRecordKind.Error())
+			return nil, status.Error(codes.Internal, domain.ErrInvalidVaultRecordKind.Error())
+		}
 		pbRecord.Data = &pb.Record_Creds{
 			Creds: &pb.Creds{
 				Login:    data.Login,
@@ -162,7 +166,11 @@ func DomainVaultRecordToProto(rec domain.VaultRecord) (*pb.Record, error) {
 		pbRecord.Info = data.Info
 	case domain.VaultKindCard:
 		pbRecord.Kind = pb.VaultKind_CARD
-		data := rec.Data.(domain.VaultDataCard)
+		data, ok := rec.Data.(domain.VaultDataCard)
+		if !ok {
+			slog.Error(domain.ErrInvalidVaultRecordKind.Error())
+			return nil, status.Error(codes.Internal, domain.ErrInvalidVaultRecordKind.Error())
+		}
 		pbRecord.Data = &pb.Record_Card{
 			Card: &pb.Card{
 				Number:     data.Number,
@@ -177,7 +185,11 @@ func DomainVaultRecordToProto(rec domain.VaultRecord) (*pb.Record, error) {
 		pbRecord.Info = data.Info
 	case domain.VaultKindNote:
 		pbRecord.Kind = pb.VaultKind_NOTE
-		data := rec.Data.(domain.VaultDataNote)
+		data, ok := rec.Data.(domain.VaultDataNote)
+		if !ok {
+			slog.Error(domain.ErrInvalidVaultRecordKind.Error())
+			return nil, status.Error(codes.Internal, domain.ErrInvalidVaultRecordKind.Error())
+		}
 		pbRecord.Data = &pb.Record_Note{
 			Note: &pb.Note{
 				Content: data.Content,
@@ -186,7 +198,11 @@ func DomainVaultRecordToProto(rec domain.VaultRecord) (*pb.Record, error) {
 		pbRecord.Info = data.Info
 	case domain.VaultKindFile:
 		pbRecord.Kind = pb.VaultKind_FILE
-		data := rec.Data.(domain.VaultDataFile)
+		data, ok := rec.Data.(domain.VaultDataFile)
+		if !ok {
+			slog.Error(domain.ErrInvalidVaultRecordKind.Error())
+			return nil, status.Error(codes.Internal, domain.ErrInvalidVaultRecordKind.Error())
+		}
 		pbRecord.Data = &pb.Record_File{
 			File: &pb.File{
 				Filename: data.Filename,
